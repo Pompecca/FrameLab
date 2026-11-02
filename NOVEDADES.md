@@ -1,3 +1,10 @@
+# Novedades de FrameLab 0.6.1
+
+## Cambios en 0.6.1
+
+- **Actualizaciones desde la app:** "Buscar actualizaciones" consulta las versiones publicadas en GitHub. Si hay una más nueva, muestra qué trae y ofrece **Descargar e instalar**. Antes de reemplazar el programa comprueba la descarga: que esté completa, que coincida con la huella publicada y que sea FrameLab de la versión anunciada. Si algo falla, queda la versión que tenías. Mientras el repositorio sea privado, la app lo explica y abre la página de descargas.
+- El exe ahora declara su número de versión, que es lo que comprueba el actualizador.
+
 # Novedades de FrameLab 0.6.0
 
 ## Cambios en 0.6.0

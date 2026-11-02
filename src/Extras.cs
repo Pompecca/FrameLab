@@ -397,10 +397,95 @@ namespace OptimizadorPC
 
     public static class Version
     {
-        public const string Actual = "0.6.0";
+        public const string Actual = "0.6.1";
         static string RutaConfig { get { return Path.Combine(Medicion.Carpeta, "actualizaciones.txt"); } }
+        public const string Repositorio = "Pompecca/FrameLab";
+        public const string PaginaDescargas = "https://github.com/" + Repositorio + "/releases";
 
-        // La URL se configura en un archivo: debe devolver {"version":"x.y.z","descarga":"https://..."}
+        public class Nueva { public System.Version Numero; public string Notas, UrlExe; public long Tamaño; public string Sha256; public bool Privado; }
+
+        static WebClient Cliente()
+        {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            var w = new WebClient { Encoding = Encoding.UTF8 };
+            w.Headers[HttpRequestHeader.UserAgent] = "FrameLab/" + Actual;
+            w.Headers[HttpRequestHeader.Accept] = "application/vnd.github+json";
+            return w;
+        }
+
+        // Fuente por defecto: la última versión publicada en GitHub. Devuelve null si no hay nada más nuevo
+        public static Nueva BuscarEnGitHub()
+        {
+            string json;
+            try { using (var w = Cliente()) json = w.DownloadString("https://api.github.com/repos/" + Repositorio + "/releases"); }
+            catch (WebException ex)
+            {
+                var r = ex.Response as HttpWebResponse;
+                // Un repositorio privado responde como si no existiera
+                if (r != null && (r.StatusCode == HttpStatusCode.NotFound || r.StatusCode == HttpStatusCode.Unauthorized || r.StatusCode == HttpStatusCode.Forbidden)) return new Nueva { Privado = true };
+                throw new InvalidOperationException("No se pudo conectar con GitHub. Revisá la conexión a internet.");
+            }
+            // Las versiones beta se publican como "prerelease": se toma la más nueva que no sea borrador
+            var lista = new JavaScriptSerializer().Deserialize<List<Dictionary<string, object>>>(json) ?? new List<Dictionary<string, object>>();
+            Nueva mejor = null;
+            foreach (var r in lista)
+            {
+                if (r.ContainsKey("draft") && Convert.ToBoolean(r["draft"])) continue;
+                System.Version v;
+                if (!System.Version.TryParse(Convert.ToString(r["tag_name"]).TrimStart('v', 'V'), out v)) continue;
+                var exe = (r["assets"] as System.Collections.ArrayList ?? new System.Collections.ArrayList()).OfType<Dictionary<string, object>>()
+                    .FirstOrDefault(a => Convert.ToString(a["name"]).Equals("FrameLab.exe", StringComparison.OrdinalIgnoreCase));
+                if (exe == null || (mejor != null && v <= mejor.Numero)) continue;
+                string digest = exe.ContainsKey("digest") ? Convert.ToString(exe["digest"]) : "";
+                mejor = new Nueva { Numero = v, Notas = Convert.ToString(r["body"]), UrlExe = Convert.ToString(exe["browser_download_url"]), Tamaño = Convert.ToInt64(exe["size"]), Sha256 = digest.StartsWith("sha256:") ? digest.Substring(7) : null };
+            }
+            return mejor != null && mejor.Numero > new System.Version(Actual) ? mejor : null;
+        }
+
+        // Baja el exe nuevo, lo comprueba y lo pone en lugar del actual. Si algo falla, deja todo como estaba
+        public static void Instalar(Nueva n, string exe = null)
+        {
+            if (exe == null) exe = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string nuevo = exe + ".nuevo", viejo = Path.Combine(Path.GetDirectoryName(exe), Path.GetFileNameWithoutExtension(exe) + ".old.exe");
+            if (File.Exists(nuevo)) File.Delete(nuevo);
+            using (var w = Cliente()) w.DownloadFile(n.UrlExe, nuevo);
+            try
+            {
+                var info = new FileInfo(nuevo);
+                if (info.Length == 0 || (n.Tamaño > 0 && info.Length != n.Tamaño)) throw new InvalidOperationException("La descarga quedó incompleta.");
+                if (n.Sha256 != null)
+                    using (var s = File.OpenRead(nuevo))
+                    using (var h = System.Security.Cryptography.SHA256.Create())
+                        if (!string.Concat(h.ComputeHash(s).Select(b => b.ToString("x2"))).Equals(n.Sha256, StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("El archivo descargado no coincide con el publicado.");
+                // Tiene que ser FrameLab y de la versión anunciada
+                var nombre = System.Reflection.AssemblyName.GetAssemblyName(nuevo);
+                if (!nombre.Name.Equals("FrameLab", StringComparison.OrdinalIgnoreCase) || new System.Version(nombre.Version.Major, nombre.Version.Minor, nombre.Version.Build) != new System.Version(n.Numero.Major, n.Numero.Minor, Math.Max(0, n.Numero.Build)))
+                    throw new InvalidOperationException("El archivo descargado no es la versión " + n.Numero + " de FrameLab.");
+            }
+            catch (BadImageFormatException) { File.Delete(nuevo); throw new InvalidOperationException("El archivo descargado no es un programa válido."); }
+            catch { File.Delete(nuevo); throw; }
+
+            // Windows deja renombrar un programa abierto: el viejo se borra la próxima vez que se abre la app
+            if (File.Exists(viejo)) File.Delete(viejo);
+            File.Move(exe, viejo);
+            try { File.Move(nuevo, exe); }
+            catch { File.Move(viejo, exe); throw; }
+        }
+
+        public static void BorrarVersionVieja()
+        {
+            try
+            {
+                string exe = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string viejo = Path.Combine(Path.GetDirectoryName(exe), Path.GetFileNameWithoutExtension(exe) + ".old.exe");
+                if (File.Exists(viejo)) File.Delete(viejo);
+            }
+            catch (Exception) { }
+        }
+
+        public static bool HayConfiguracionPropia { get { return File.Exists(RutaConfig) && File.ReadAllText(RutaConfig).Trim() != ""; } }
+
+        // Alternativa: una URL propia en actualizaciones.txt que devuelva {"version":"x.y.z","descarga":"https://..."}
         public static string Buscar()
         {
             if (!File.Exists(RutaConfig) || File.ReadAllText(RutaConfig).Trim() == "")

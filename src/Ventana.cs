@@ -15,6 +15,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 [assembly: System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.8", FrameworkDisplayName = ".NET Framework 4.8")]
+// El actualizador comprueba que el exe descargado tenga esta versión
+[assembly: AssemblyVersion(OptimizadorPC.Version.Actual + ".0")]
+[assembly: AssemblyTitle("FrameLab")]
 
 namespace OptimizadorPC
 {
@@ -1348,13 +1351,46 @@ namespace OptimizadorPC
             s.Children.Add(d);
             var res = Texto("", 13, Tinta); res.Visibility = Visibility.Collapsed;
             var b = Boton("Buscar actualizaciones"); b.HorizontalAlignment = HorizontalAlignment.Left;
+            var acciones = new WrapPanel { Margin = new Thickness(0, 10, 0, 0) };
             b.Click += async delegate
             {
                 res.Visibility = Visibility.Visible; res.Text = "Buscando...";
-                try { res.Text = await Task.Run(() => Version.Buscar()); }
+                acciones.Children.Clear();
+                b.IsEnabled = false;
+                try
+                {
+                    if (Version.HayConfiguracionPropia) { res.Text = await Task.Run(() => Version.Buscar()); return; }
+                    var n = await Task.Run(() => Version.BuscarEnGitHub());
+                    if (n == null) { res.Text = "Tenés la última versión (" + Version.Actual + ")."; return; }
+                    if (n.Privado)
+                    {
+                        res.Text = "Las actualizaciones automáticas van a funcionar cuando FrameLab sea público. Por ahora bajá la versión nueva desde GitHub.";
+                        var g = Boton("Abrir la página de descargas", true); g.Click += delegate { Abrir(Version.PaginaDescargas); };
+                        acciones.Children.Add(g);
+                        return;
+                    }
+                    res.Text = "Hay una versión nueva: " + n.Numero + "." + (string.IsNullOrWhiteSpace(n.Notas) ? "" : "\n\n" + n.Notas.Replace("**", "").Trim());
+                    var inst = Boton("Descargar e instalar", true);
+                    inst.Click += async delegate
+                    {
+                        if (ocupado > 0 || Partida.Activo || medicion != null) { MessageBox.Show(this, "Terminá lo que está en curso (cambios, modo partida o medición) antes de actualizar.", Title); return; }
+                        inst.IsEnabled = false;
+                        res.Text = "Descargando la versión " + n.Numero + "...";
+                        try
+                        {
+                            await Task.Run(() => Version.Instalar(n));
+                            res.Text = "Listo. Se abre la versión nueva.";
+                            Process.Start(new ProcessStartInfo(Assembly.GetExecutingAssembly().Location) { UseShellExecute = true });
+                            Application.Current.Shutdown();
+                        }
+                        catch (Exception ex) { res.Text = "No se pudo actualizar: " + ex.Message + " Seguís con la versión " + Version.Actual + "."; inst.IsEnabled = true; }
+                    };
+                    acciones.Children.Add(inst);
+                }
                 catch (Exception ex) { res.Text = "No se pudo comprobar: " + ex.Message; }
+                finally { b.IsEnabled = true; }
             };
-            s.Children.Add(b); s.Children.Add(res);
+            s.Children.Add(b); s.Children.Add(res); s.Children.Add(acciones);
             var todo = new StackPanel();
             todo.Children.Add(Caja(s));
             todo.Children.Add(Subtitulo("Por qué no está"));
@@ -1524,6 +1560,7 @@ namespace OptimizadorPC
             }
             Action<string> etapa = t => { if (prueba) File.AppendAllText(Path.Combine(args[1], "etapas.txt"), DateTime.Now.ToString("HH:mm:ss") + " " + t + Environment.NewLine); };
             etapa("inicio");
+            if (!prueba) Version.BorrarVersionVieja();
             // Antes de leer preferencias o copias: la carpeta de datos cambió de nombre
             if (!prueba) { try { Motor.MigrarRespaldo(); } catch (Exception ex) { Util.RegistrarError(ex); } }
             Ventana v;
