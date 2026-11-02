@@ -1,0 +1,17 @@
+name: Sugerencia
+description: Una idea para mejorar FrameLab
+title: "[Idea] "
+labels: ["sugerencia"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Tu idea
+      description: Qué te gustaría que haga FrameLab y para qué te serviría.
+    validations:
+      required: true
+  - type: input
+    id: juego
+    attributes:
+      label: Juego o programa relacionado (opcional)
+      placeholder: "Fortnite, Valorant, Minecraft..."

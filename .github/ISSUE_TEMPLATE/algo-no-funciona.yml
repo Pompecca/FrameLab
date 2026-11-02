@@ -1,0 +1,56 @@
+name: Algo no funciona
+description: Contanos qué falló para poder arreglarlo
+title: "[Problema] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¡Gracias por avisar! Cuanto más detalle, más rápido se arregla.
+  - type: input
+    id: version
+    attributes:
+      label: Versión de FrameLab
+      description: La ves en Acerca de, por ejemplo 1.0.2
+      placeholder: "1.0.2"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Versión de Windows
+      description: Por ejemplo "Windows 11 24H2" o "Windows 10 22H2". La ves en Diagnóstico.
+    validations:
+      required: true
+  - type: dropdown
+    id: equipo
+    attributes:
+      label: Tipo de PC
+      options:
+        - PC de escritorio
+        - Notebook
+    validations:
+      required: true
+  - type: textarea
+    id: paso
+    attributes:
+      label: Qué pasó
+      description: Qué esperabas que pasara y qué pasó en realidad. Si apareció un mensaje, copialo.
+    validations:
+      required: true
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Cómo hacer que vuelva a pasar
+      description: Los pasos, uno por línea.
+      placeholder: |
+        1. Abrí FrameLab
+        2. Toqué Optimizar
+        3. ...
+  - type: textarea
+    id: registro
+    attributes:
+      label: Registro de errores (opcional)
+      description: |
+        Abrí la carpeta %LOCALAPPDATA%\FrameLab y arrastrá acá el archivo errores.log, si existe.
+        Antes de subirlo, abrilo y fijate que no tenga datos personales (tu nombre de usuario aparece en las rutas: podés borrarlo).

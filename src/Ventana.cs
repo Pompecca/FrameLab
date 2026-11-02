@@ -1648,7 +1648,10 @@ namespace OptimizadorPC
             var apoyo = Texto("FrameLab es gratis y lo hace una sola persona. Si te sirvió, podés invitarme un cafecito.", 13, Suave); apoyo.Margin = new Thickness(0, 14, 0, 8);
             var cafe = Boton("☕ Invitame un cafecito", true); cafe.HorizontalAlignment = HorizontalAlignment.Left;
             cafe.Click += delegate { Abrir(Version.Cafecito); };
-            s.Children.Add(apoyo); s.Children.Add(cafe);
+            var reportar = Boton("Reportar un problema o sugerir algo"); reportar.HorizontalAlignment = HorizontalAlignment.Left;
+            reportar.Click += delegate { Abrir(Version.Reportar); };
+            var filaApoyo = new WrapPanel(); filaApoyo.Children.Add(cafe); filaApoyo.Children.Add(reportar);
+            s.Children.Add(apoyo); s.Children.Add(filaApoyo);
             var todo = new StackPanel();
             todo.Children.Add(Caja(s));
             todo.Children.Add(Subtitulo("Por qué no está"));

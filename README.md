@@ -2,7 +2,7 @@
 
 Optimizador de Windows para juegos, en español. Es portable: un solo `.exe`, sin instalación.
 
-> Versión 1.0.1. Probada en Windows 11 (PC con AtlasOS, i5 y GTX 1050 Ti) y en Windows 10 22H2 de fábrica (i3-3220 y GT 710).
+> Versión 1.0.2. Probada en Windows 11 (PC con AtlasOS, i5 y GTX 1050 Ti) y en Windows 10 22H2 de fábrica (i3-3220 y GT 710).
 
 ## Cómo se usa, en 3 pasos
 
@@ -13,6 +13,10 @@ Optimizador de Windows para juegos, en español. Es portable: un solo `.exe`, si
 Si algo no te gusta, abrí la app y tocá **Deshacer todo**: todo vuelve a como estaba.
 
 En la misma pantalla, **Qué frena tu PC** te dice qué es lo que más limita tus juegos. Si querés ajustar tus juegos, entrá a **Juegos**. El resto de las herramientas está en **Opciones avanzadas**, abajo a la izquierda.
+
+## Ayuda y sugerencias
+
+¿Algo no funciona o tenés una idea? [Contalo acá](https://github.com/Pompecca/FrameLab/issues/new/choose). También desde la app: Acerca de > Reportar un problema.
 
 ## Apoyar
 

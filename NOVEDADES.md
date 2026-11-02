@@ -1,3 +1,9 @@
+# Novedades de FrameLab 1.0.2
+
+## Cambios en 1.0.2
+
+- **Reportar un problema:** botón en Acerca de que abre los formularios de GitHub: "Algo no funciona" y "Sugerencia", en español.
+
 # Novedades de FrameLab 1.0.1
 
 ## Cambios en 1.0.1
