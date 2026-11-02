@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FrameLab</title>
+<meta name="description" content="Optimizá Windows con ajustes reversibles y medí si tus juegos mejoraron de verdad.">
+<link rel="icon" href="logo.png">
+<style>
+:root{--fondo:#0f1218;--lateral:#141821;--tarjeta:#1a1f2b;--borde:#2a3140;--tinta:#eef1f6;--suave:#9aa5b8;--acento:#22c7d6;--acento-tinta:#06242a}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif}
+.ancho{max-width:1040px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--borde);background:var(--lateral)}
+.barra{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:14px;padding-bottom:14px}
+.marca{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;color:inherit;text-decoration:none}
+.marca img{width:34px;height:34px}
+nav a{color:var(--suave);text-decoration:none;margin-left:18px;font-size:15px}
+nav a:hover{color:var(--tinta)}
+.portada{padding:72px 20px 48px;text-align:center}
+h1{font-size:clamp(34px,6vw,54px);line-height:1.12;margin:0 auto 18px;max-width:780px;letter-spacing:-.02em}
+.portada p{color:var(--suave);font-size:19px;max-width:640px;margin:0 auto 28px}
+.boton{display:inline-block;background:var(--acento);color:var(--acento-tinta);font-weight:600;padding:12px 24px;border-radius:9px;text-decoration:none}
+.boton:hover{opacity:.87}
+.nota{color:var(--suave);font-size:14px;margin-top:12px}
+.captura{display:block;width:100%;height:auto;border:1px solid var(--borde);border-radius:12px}
+section.ancho{padding:44px 20px}
+h2{font-size:30px;margin:0 0 8px;letter-spacing:-.01em}
+.intro{color:var(--suave);margin:0 0 26px;max-width:700px}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.tarjeta{background:var(--tarjeta);border:1px solid var(--borde);border-radius:12px;padding:20px}
+.tarjeta h3{margin:0 0 6px;font-size:18px}
+.tarjeta p{margin:0;color:var(--suave);font-size:15px}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dos figure{margin:0}
+figcaption{color:var(--suave);font-size:14px;margin-top:8px}
+ul.no{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 24px}
+ul.no li{color:var(--suave);padding-left:24px;position:relative}
+ul.no li::before{content:"×";color:#ff7b72;font-weight:700;position:absolute;left:4px}
+footer{border-top:1px solid var(--borde);padding:24px 0;color:var(--suave);font-size:14px}
+@media(max-width:700px){.dos{grid-template-columns:1fr}nav a:first-child{margin-left:0}.portada{padding:48px 20px 32px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="ancho barra">
+    <a class="marca" href="#"><img src="logo.png" alt="">FrameLab</a>
+    <nav><a href="#funciones">Funciones</a><a href="#honesta">Sin humo</a><a href="#descargar">Descargar</a></nav>
+  </div>
+</header>
+<main>
+  <div class="ancho portada">
+    <h1>Optimizá Windows y comprobá si de verdad mejoró</h1>
+    <p>FrameLab revisa tu PC, aplica ajustes que podés deshacer y mide tus juegos antes y después.</p>
+    <a class="boton" href="#descargar">Descargar para Windows</a>
+    <div class="nota">Sin instalación. Windows 11 y Windows 10 versión 2004 o más nuevo.</div>
+  </div>
+  <div class="ancho"><img class="captura" src="optimizaciones.png" alt="Sección Optimizaciones de FrameLab, con ajustes y su estado" width="1104" height="721"></div>
+
+  <section id="funciones" class="ancho">
+    <h2>Todo en un solo lugar</h2>
+    <p class="intro">Cada ajuste indica su impacto y su riesgo, y se puede revertir.</p>
+    <div class="rejilla">
+      <div class="tarjeta"><h3>Medí tus partidas</h3><p>FPS, mínimos y tirones, con una explicación clara de qué los causa y una comparación de antes y después.</p></div>
+      <div class="tarjeta"><h3>96 ajustes reversibles</h3><p>Rendimiento, privacidad, energía y servicios. Elegí los perfiles Seguro, Gamer o Avanzado, o marcá uno por uno.</p></div>
+      <div class="tarjeta"><h3>Revisá tu hardware</h3><p>Detecta RAM en un solo canal, juegos en disco duro, un monitor por debajo de sus Hz y otros problemas.</p></div>
+      <div class="tarjeta"><h3>Ajustes para tus juegos</h3><p>Recomendaciones para Fortnite, Valorant, CS2, Minecraft y Roblox, con un límite de FPS según tu monitor.</p></div>
+      <div class="tarjeta"><h3>Monitor en vivo</h3><p>Temperatura, uso y avisos cuando el hardware se frena.</p></div>
+      <div class="tarjeta"><h3>Limpieza e instalación</h3><p>Liberá espacio, controlá los programas de inicio e instalá apps desde fuentes oficiales.</p></div>
+    </div>
+  </section>
+
+  <section class="ancho">
+    <div class="dos">
+      <figure><img class="captura" src="medir.png" alt="Sección Medir partida" width="1104" height="721" loading="lazy"><figcaption>Medí una partida y compará.</figcaption></figure>
+      <figure><img class="captura" src="juegos.png" alt="Sección Juegos con recomendaciones" width="1104" height="721" loading="lazy"><figcaption>Recomendaciones para tus juegos.</figcaption></figure>
+      <figure><img class="captura" src="resumen.png" alt="Sección Resumen" width="1104" height="721" loading="lazy"><figcaption>El estado de tu PC de un vistazo.</figcaption></figure>
+      <figure><img class="captura" src="diagnostico.png" alt="Sección Diagnóstico" width="1104" height="721" loading="lazy"><figcaption>Qué tiene tu PC y qué conviene revisar.</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="honesta" class="ancho">
+    <h2>Lo que no vas a encontrar</h2>
+    <p class="intro">No prometemos un número de FPS: depende de cada PC. Por eso la app lo mide. Tampoco incluye lo que da poco y arriesga mucho.</p>
+    <ul class="no">
+      <li>Limpiadores de RAM</li>
+      <li>Desactivar Defender o SmartScreen</li>
+      <li>Desactivar actualizaciones para siempre</li>
+      <li>Quitar el archivo de paginación</li>
+      <li>Drivers de páginas no oficiales</li>
+      <li>Tocar juegos con antitrampas</li>
+    </ul>
+  </section>
+
+  <section id="descargar" class="ancho">
+    <div class="tarjeta">
+      <h2>Descargar</h2>
+      <p>Disponible pronto. FrameLab pide permiso de administrador porque cambia ajustes de Windows, y antes de aplicarlos crea un punto de restauración.</p>
+    </div>
+  </section>
+</main>
+<footer><div class="ancho">FrameLab. No está afiliada a Microsoft, NVIDIA, AMD, Intel ni a los juegos mencionados.</div></footer>
+</body>
+</html>

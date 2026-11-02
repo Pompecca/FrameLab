@@ -1,0 +1,2369 @@
+[
+    {
+        "id":  "plan-energia",
+        "windows":  "10,11",
+        "nombre":  "Plan de energía de alto rendimiento",
+        "descripcion":  "Mantiene la CPU lista para responder, a cambio de más consumo.",
+        "categoria":  "Rendimiento",
+        "impacto":  "Medio",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "planEnergia"
+                         }
+                     ],
+        "soloEscritorio":  true
+    },
+    {
+        "id":  "prioridad-ventana",
+        "windows":  "10,11",
+        "nombre":  "Prioridad a la ventana activa",
+        "descripcion":  "Da más tiempo de CPU al programa o juego que estás usando (Win32PrioritySeparation = 38).",
+        "categoria":  "Rendimiento",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control\\PriorityControl",
+                             "valor":  "Win32PrioritySeparation",
+                             "tipoValor":  "DWord",
+                             "dato":  "38"
+                         }
+                     ]
+    },
+    {
+        "id":  "respuesta-sistema",
+        "windows":  "10,11",
+        "nombre":  "Menos CPU reservada para tareas de fondo",
+        "descripcion":  "Reduce la CPU reservada a tareas de baja prioridad (SystemResponsiveness = 10).",
+        "categoria":  "Rendimiento",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile",
+                             "valor":  "SystemResponsiveness",
+                             "tipoValor":  "DWord",
+                             "dato":  "10"
+                         }
+                     ]
+    },
+    {
+        "id":  "efectos-minimos",
+        "windows":  "10,11",
+        "nombre":  "Efectos visuales al mínimo",
+        "descripcion":  "Quita animaciones y sombras de Windows. Se ve más simple.",
+        "categoria":  "Rendimiento",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\VisualEffects",
+                             "valor":  "VisualFXSetting",
+                             "tipoValor":  "DWord",
+                             "dato":  "2"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Control Panel\\Desktop\\WindowMetrics",
+                             "valor":  "MinAnimate",
+                             "tipoValor":  "String",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                             "valor":  "TaskbarAnimations",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\DWM",
+                             "valor":  "EnableAeroPeek",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "apps-fondo",
+        "windows":  "10,11",
+        "nombre":  "Desactivar apps en segundo plano",
+        "descripcion":  "Las apps de Microsoft Store no siguen funcionando cerradas. Algunas pueden dejar de avisarte.",
+        "categoria":  "Rendimiento",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\BackgroundAccessApplications",
+                             "valor":  "GlobalUserDisabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "widgets",
+        "windows":  "11",
+        "nombre":  "Desactivar widgets",
+        "descripcion":  "Quita el panel de noticias e intereses.",
+        "categoria":  "Rendimiento",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Dsh",
+                             "valor":  "AllowNewsAndInterests",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "transparencia",
+        "windows":  "10,11",
+        "nombre":  "Sin transparencia en Windows",
+        "descripcion":  "Quita los efectos de transparencia.",
+        "categoria":  "Rendimiento",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                             "valor":  "EnableTransparency",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "game-dvr",
+        "windows":  "10,11",
+        "nombre":  "Desactivar Game DVR",
+        "descripcion":  "Quita la captura de Xbox Game Bar en segundo plano. Ya no vas a poder grabar con ella.",
+        "categoria":  "Juegos",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\System\\GameConfigStore",
+                             "valor":  "GameDVR_Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\GameDVR",
+                             "valor":  "AppCaptureEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "game-mode",
+        "windows":  "10,11",
+        "nombre":  "Activar Modo de juego",
+        "descripcion":  "Windows prioriza el juego y evita actualizaciones durante la partida.",
+        "categoria":  "Juegos",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\GameBar",
+                             "valor":  "AutoGameModeEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\GameBar",
+                             "valor":  "AllowAutoGameMode",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "raton-sin-aceleracion",
+        "windows":  "10,11",
+        "nombre":  "Desactivar aceleración del mouse",
+        "descripcion":  "El cursor se mueve siempre igual, lo que ayuda a la puntería.",
+        "categoria":  "Juegos",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Control Panel\\Mouse",
+                             "valor":  "MouseSpeed",
+                             "tipoValor":  "String",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Control Panel\\Mouse",
+                             "valor":  "MouseThreshold1",
+                             "tipoValor":  "String",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Control Panel\\Mouse",
+                             "valor":  "MouseThreshold2",
+                             "tipoValor":  "String",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "juegos-mmcss",
+        "windows":  "10,11",
+        "nombre":  "Prioridad multimedia para juegos",
+        "descripcion":  "Da más prioridad de CPU y GPU a los juegos en el programador multimedia de Windows.",
+        "categoria":  "Juegos",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
+                             "valor":  "GPU Priority",
+                             "tipoValor":  "DWord",
+                             "dato":  "8"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
+                             "valor":  "Priority",
+                             "tipoValor":  "DWord",
+                             "dato":  "6"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Multimedia\\SystemProfile\\Tasks\\Games",
+                             "valor":  "Scheduling Category",
+                             "tipoValor":  "String",
+                             "dato":  "High"
+                         }
+                     ]
+    },
+    {
+        "id":  "teclas-especiales",
+        "windows":  "10,11",
+        "nombre":  "Sin atajo de teclas especiales",
+        "descripcion":  "Evita que Shift cinco veces abra la ventana que interrumpe los juegos.",
+        "categoria":  "Juegos",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Control Panel\\Accessibility\\StickyKeys",
+                             "valor":  "Flags",
+                             "tipoValor":  "String",
+                             "dato":  "506"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Control Panel\\Accessibility\\ToggleKeys",
+                             "valor":  "Flags",
+                             "tipoValor":  "String",
+                             "dato":  "58"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Control Panel\\Accessibility\\Keyboard Response",
+                             "valor":  "Flags",
+                             "tipoValor":  "String",
+                             "dato":  "122"
+                         }
+                     ]
+    },
+    {
+        "id":  "energia-nucleos",
+        "windows":  "10,11",
+        "nombre":  "Mantener todos los núcleos activos",
+        "descripcion":  "Desactiva el aparcamiento de núcleos con la PC enchufada. Más consumo y algo más de calor.",
+        "categoria":  "Energía",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "energia",
+                             "sub":  "54533251-82be-4824-96c1-47b60b740d00",
+                             "ajuste":  "0cc5b647-c1df-4637-891a-dec35c318583",
+                             "dato":  "100"
+                         }
+                     ],
+        "soloEscritorio":  true
+    },
+    {
+        "id":  "energia-cpu-minima",
+        "windows":  "10,11",
+        "nombre":  "Estado mínimo de la CPU al 100 %",
+        "descripcion":  "La CPU no baja de frecuencia con la PC enchufada. Más consumo y calor en reposo.",
+        "categoria":  "Energía",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "energia",
+                             "sub":  "54533251-82be-4824-96c1-47b60b740d00",
+                             "ajuste":  "893dee8e-2bef-41e0-89c6-b55d0929964c",
+                             "dato":  "100"
+                         }
+                     ],
+        "soloEscritorio":  true
+    },
+    {
+        "id":  "energia-pcie",
+        "windows":  "10,11",
+        "nombre":  "Sin ahorro de energía en PCIe",
+        "descripcion":  "Evita que la placa de video y otras placas entren en reposo (ASPM).",
+        "categoria":  "Energía",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "energia",
+                             "sub":  "501a4d13-42af-4429-9fd1-a8218c268e20",
+                             "ajuste":  "ee12f906-d277-404b-b6da-e5fa1a576df5",
+                             "dato":  "0"
+                         }
+                     ],
+        "soloEscritorio":  true
+    },
+    {
+        "id":  "energia-usb",
+        "windows":  "10,11",
+        "nombre":  "Sin suspensión selectiva de USB",
+        "descripcion":  "Evita que el mouse, el teclado y otros USB entren en reposo.",
+        "categoria":  "Energía",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "energia",
+                             "sub":  "2a737441-1930-4402-8d77-b2bebba308a3",
+                             "ajuste":  "48e6b7a6-50f5-4782-a5d4-53bb8f07e226",
+                             "dato":  "0"
+                         }
+                     ],
+        "soloEscritorio":  true
+    },
+    {
+        "id":  "energia-red",
+        "windows":  "10,11",
+        "nombre":  "Sin ahorro de energía en la red",
+        "descripcion":  "Desactiva Energy Efficient Ethernet y funciones parecidas si tu adaptador las tiene. La red se corta unos segundos al aplicar.",
+        "categoria":  "Energía",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "red"
+                         }
+                     ],
+        "soloEscritorio":  true
+    },
+    {
+        "id":  "standby-red",
+        "windows":  "10,11",
+        "nombre":  "Sin red durante Modern Standby",
+        "descripcion":  "Ahorra batería en suspensión, pero ya no vas a recibir avisos y descargas. Solo notebooks.",
+        "categoria":  "Energía",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\f15576e8-98b7-4186-b944-eafa664402d9",
+                             "valor":  "ACSettingIndex",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\f15576e8-98b7-4186-b944-eafa664402d9",
+                             "valor":  "DCSettingIndex",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ],
+        "condicion":  "portatil"
+    },
+    {
+        "id":  "gpu-msi",
+        "windows":  "10,11",
+        "nombre":  "Modo MSI en la placa de video",
+        "descripcion":  "Usa interrupciones más eficientes. Solo se aplica si tu placa lo admite y requiere reiniciar.",
+        "categoria":  "Placa de video",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "msi"
+                         }
+                     ]
+    },
+    {
+        "id":  "gpu-hags",
+        "windows":  "10,11",
+        "nombre":  "Activar programación de GPU por hardware (HAGS)",
+        "descripcion":  "Las pruebas son contradictorias: mejor medir antes y después. Requiere reiniciar.",
+        "categoria":  "Placa de video",
+        "impacto":  "Probar midiendo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control\\GraphicsDrivers",
+                             "valor":  "HwSchMode",
+                             "tipoValor":  "DWord",
+                             "dato":  "2"
+                         }
+                     ]
+    },
+    {
+        "id":  "gpu-mpo",
+        "windows":  "10,11",
+        "nombre":  "Desactivar Multiplane Overlay (MPO)",
+        "descripcion":  "Puede quitar parpadeos o tirones en algunas PC. Mejor medir antes y después. Requiere reiniciar.",
+        "categoria":  "Placa de video",
+        "impacto":  "Probar midiendo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows\\Dwm",
+                             "valor":  "OverlayTestMode",
+                             "tipoValor":  "DWord",
+                             "dato":  "5"
+                         }
+                     ]
+    },
+    {
+        "id":  "guia-nvidia",
+        "windows":  "10,11",
+        "nombre":  "Panel de control de NVIDIA",
+        "guia":  "Abrí el Panel de control de NVIDIA \u003e Administrar la configuración 3D. Poné Modo de administración de energía en \"Preferir rendimiento máximo\", Modo de baja latencia en \"Activado\" y Tamaño de caché de sombreador en \"10 GB\". Más consumo en reposo.",
+        "condicion":  "gpu:NVIDIA",
+        "categoria":  "Guías",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+
+                     ]
+    },
+    {
+        "id":  "guia-amd",
+        "windows":  "10,11",
+        "nombre":  "AMD Software: Adrenalin",
+        "guia":  "Abrí AMD Software \u003e Gaming \u003e Gráficos. Activá Radeon Anti-Lag si el juego lo admite, y probá de a uno midiendo.",
+        "condicion":  "gpu:AMD",
+        "categoria":  "Guías",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+
+                     ]
+    },
+    {
+        "id":  "hibernacion",
+        "windows":  "10,11",
+        "nombre":  "Desactivar hibernación",
+        "descripcion":  "Libera espacio en disco. La PC ya no podrá hibernar.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "hibernacion"
+                         }
+                     ],
+        "soloEscritorio":  true
+    },
+    {
+        "id":  "optimizacion-entrega",
+        "windows":  "10,11",
+        "nombre":  "Desactivar Optimización de entrega",
+        "descripcion":  "Tu PC deja de compartir actualizaciones con otros equipos.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization",
+                             "valor":  "DODownloadMode",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-fth",
+        "windows":  "10,11",
+        "nombre":  "Desactivar Fault Tolerant Heap",
+        "descripcion":  "Evita que Windows aplique a apps con fallos unas correcciones que pueden hacerlas más lentas.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\FTH",
+                             "valor":  "Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-svchost",
+        "windows":  "10,11",
+        "nombre":  "Agrupar servicios según tu RAM",
+        "descripcion":  "Ajusta el umbral de svchost a la RAM de la PC para tener menos procesos.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control",
+                             "valor":  "SvcHostSplitThresholdInKB",
+                             "tipoValor":  "DWord",
+                             "dato":  "ram"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-ultimo-acceso",
+        "windows":  "10,11",
+        "nombre":  "No registrar el último acceso a archivos",
+        "descripcion":  "Menos escrituras en disco. Algunas apps de copia de seguridad usan ese dato.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+                             "valor":  "NtfsDisableLastAccessUpdate",
+                             "tipoValor":  "DWord",
+                             "dato":  "2147483649"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-8dot3",
+        "windows":  "10,11",
+        "nombre":  "Desactivar nombres cortos 8.3",
+        "descripcion":  "Menos trabajo al crear archivos. Algún programa muy antiguo puede necesitarlos.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control\\FileSystem",
+                             "valor":  "NtfsDisable8dot3NameCreation",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-retraso-inicio",
+        "windows":  "10,11",
+        "nombre":  "Sin retraso para programas de inicio",
+        "descripcion":  "Los programas de inicio arrancan sin esperar después de entrar a Windows.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Serialize",
+                             "valor":  "StartupDelayInMSec",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-apagado",
+        "windows":  "10,11",
+        "nombre":  "Apagado más rápido",
+        "descripcion":  "Windows espera menos a los servicios al apagar. Un servicio lento podría cerrarse sin terminar.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control",
+                             "valor":  "WaitToKillServiceTimeout",
+                             "tipoValor":  "String",
+                             "dato":  "2000"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-menus",
+        "windows":  "10,11",
+        "nombre":  "Menús sin retraso",
+        "descripcion":  "Los menús de Windows se abren al instante.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Control Panel\\Desktop",
+                             "valor":  "MenuShowDelay",
+                             "tipoValor":  "String",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-storage-sense",
+        "windows":  "10,11",
+        "nombre":  "Desactivar Storage Sense",
+        "descripcion":  "Windows deja de limpiar archivos por su cuenta. Vas a tener que limpiar a mano.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\StorageSense\\Parameters\\StoragePolicy",
+                             "valor":  "01",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-sysmain",
+        "windows":  "10,11",
+        "nombre":  "Desactivar SysMain",
+        "descripcion":  "Efecto pequeño. Solo para PC con SSD; algunas apps pueden tardar algo más en abrir.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "SysMain",
+                             "dato":  "4"
+                         }
+                     ],
+        "condicion":  "ssd"
+    },
+    {
+        "id":  "sistema-carpetas",
+        "windows":  "10,11",
+        "nombre":  "Explorador sin detección automática de carpetas",
+        "descripcion":  "Las carpetas con muchos archivos se abren más rápido. Ya no se elige la vista según el contenido.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\Bags\\AllFolders\\Shell",
+                             "valor":  "FolderType",
+                             "tipoValor":  "String",
+                             "dato":  "NotSpecified"
+                         }
+                     ]
+    },
+    {
+        "id":  "sistema-sleep-study",
+        "windows":  "10,11",
+        "nombre":  "Menos registro de diagnóstico de energía",
+        "descripcion":  "Reduce un registro de energía que casi nadie usa (Sleep Study).",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+                             "valor":  "AllowSleepStudy",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "seguridad-wpbt",
+        "windows":  "10,11",
+        "nombre":  "Bloquear software instalado por el firmware (WPBT)",
+        "descripcion":  "Evita que el firmware instale programas en Windows. Algunas utilidades de fabricantes dejarán de instalarse solas.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager",
+                             "valor":  "DisableWpbtExecution",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "ink",
+        "windows":  "10,11",
+        "nombre":  "Desactivar Windows Ink Workspace",
+        "descripcion":  "Si no usás lápiz, quita este panel.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\WindowsInkWorkspace",
+                             "valor":  "AllowWindowsInkWorkspace",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "sin-reinicio",
+        "windows":  "10,11",
+        "nombre":  "No reiniciar solo después de actualizar",
+        "descripcion":  "Windows no reinicia mientras tenés sesión abierta. Vas a tener que hacerlo vos.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU",
+                             "valor":  "NoAutoRebootWithLoggedOnUsers",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "actualizaciones-tempranas",
+        "windows":  "10,11",
+        "nombre":  "No recibir funciones nuevas antes",
+        "descripcion":  "Desactiva \"recibir las actualizaciones en cuanto estén disponibles\". Los parches de seguridad siguen llegando.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\WindowsUpdate\\UX\\Settings",
+                             "valor":  "IsContinuousInnovationOptedIn",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "telemetria",
+        "windows":  "10,11",
+        "nombre":  "Reducir telemetría",
+        "descripcion":  "Pide a Windows enviar el mínimo de datos de diagnóstico.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+                             "valor":  "AllowTelemetry",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "publicidad",
+        "windows":  "10,11",
+        "nombre":  "Desactivar ID de publicidad",
+        "descripcion":  "Las apps no usan tu identificador para mostrarte anuncios personalizados.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo",
+                             "valor":  "Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "historial-actividad",
+        "windows":  "10,11",
+        "nombre":  "Desactivar historial de actividad",
+        "descripcion":  "Windows no publica ni sube lo que hacés en la PC.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+                             "valor":  "PublishUserActivities",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+                             "valor":  "UploadUserActivities",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "apps-sugeridas",
+        "windows":  "10,11",
+        "nombre":  "Bloquear apps sugeridas",
+        "descripcion":  "Evita que Windows instale apps promocionadas por su cuenta.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent",
+                             "valor":  "DisableWindowsConsumerFeatures",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "contenido-sugerido",
+        "windows":  "10,11",
+        "nombre":  "Quitar contenido sugerido",
+        "descripcion":  "Oculta sugerencias y promociones de Windows.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                             "valor":  "SilentInstalledAppsEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                             "valor":  "SystemPaneSuggestionsEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                             "valor":  "SubscribedContent-338387Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "seguimiento-apps",
+        "windows":  "10,11",
+        "nombre":  "No registrar las apps que abrís",
+        "descripcion":  "Windows deja de usar ese registro en Inicio y en la búsqueda.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                             "valor":  "Start_TrackProgs",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "informes-errores",
+        "windows":  "10,11",
+        "nombre":  "Desactivar informes de errores",
+        "descripcion":  "No se envían fallos a Microsoft. Puede dificultar diagnosticar problemas.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting",
+                             "valor":  "Disabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "ceip",
+        "windows":  "10,11",
+        "nombre":  "Salir del programa de mejora (CEIP)",
+        "descripcion":  "Deja de participar en la recopilación de datos de uso.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\SQMClient\\Windows",
+                             "valor":  "CEIPEnable",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "busqueda-web",
+        "windows":  "10,11",
+        "nombre":  "Quitar la web de la búsqueda de Inicio",
+        "descripcion":  "La búsqueda de Inicio solo muestra resultados de tu PC.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
+                             "valor":  "DisableWebSearch",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search",
+                             "valor":  "ConnectedSearchUseWeb",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "copilot",
+        "windows":  "11",
+        "nombre":  "Desactivar Copilot",
+        "descripcion":  "Desactiva Copilot de Windows mediante directiva.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Policies\\Microsoft\\Windows\\WindowsCopilot",
+                             "valor":  "TurnOffWindowsCopilot",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-telemetria-extra",
+        "windows":  "10,11",
+        "nombre":  "Telemetría: valores adicionales",
+        "descripcion":  "Aplica el nivel mínimo también en otras dos ubicaciones de Windows.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\PolicyManager\\default\\System\\AllowTelemetry",
+                             "valor":  "value",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\CPSS\\DevicePolicy\\AllowTelemetry",
+                             "valor":  "DefaultValue",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-logs",
+        "windows":  "10,11",
+        "nombre":  "Limitar logs y volcados de diagnóstico",
+        "descripcion":  "Reduce lo que Windows puede recopilar para diagnóstico.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+                             "valor":  "LimitDiagnosticLogCollection",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection",
+                             "valor":  "LimitDumpCollection",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-experimentos",
+        "windows":  "10,11",
+        "nombre":  "Desactivar experimentos de Microsoft",
+        "descripcion":  "Windows deja de probar funciones en tu PC.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\PolicyManager\\current\\device\\System",
+                             "valor":  "AllowExperimentation",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-ceip-extra",
+        "windows":  "10,11",
+        "nombre":  "Programa de mejora: valor adicional",
+        "descripcion":  "Desactiva también el valor de CEIP de la configuración del sistema.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\UnattendSettings\\SQMClient",
+                             "valor":  "CEIPEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-metadatos",
+        "windows":  "10,11",
+        "nombre":  "No descargar apps de fabricantes",
+        "descripcion":  "Windows no descarga información ni apps de dispositivos desde internet.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\Device Metadata",
+                             "valor":  "PreventDeviceMetadataFromNetwork",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-notepad-ia",
+        "windows":  "11",
+        "nombre":  "Quitar la IA del Bloc de notas",
+        "descripcion":  "Desactiva las funciones de IA del Bloc de notas.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\WindowsNotepad",
+                             "valor":  "DisableAIFeatures",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-recomendaciones",
+        "windows":  "11",
+        "nombre":  "Quitar recomendaciones de Inicio",
+        "descripcion":  "Oculta apps y archivos recomendados en el menú Inicio.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                             "valor":  "Start_IrisRecommendations",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-sugerencias",
+        "windows":  "10,11",
+        "nombre":  "Quitar consejos de Windows",
+        "descripcion":  "Sin notificaciones con consejos y trucos.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                             "valor":  "SubscribedContent-338389Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-opiniones",
+        "windows":  "10,11",
+        "nombre":  "No pedir opiniones",
+        "descripcion":  "Windows deja de preguntarte tu opinión.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Siuf\\Rules",
+                             "valor":  "NumberOfSIUFInPeriod",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-ubicacion",
+        "windows":  "10,11",
+        "nombre":  "Desactivar la ubicación",
+        "descripcion":  "Las apps no pueden usar tu ubicación. Mapas o Clima pueden pedirla a mano. Marcalo si querés.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\LocationAndSensors",
+                             "valor":  "DisableLocation",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "privacidad-entrada",
+        "windows":  "10,11",
+        "nombre":  "No personalizar con lo que escribís",
+        "descripcion":  "Windows deja de recopilar escritura y entradas de texto para personalización.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\InputPersonalization",
+                             "valor":  "RestrictImplicitTextCollection",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\InputPersonalization",
+                             "valor":  "RestrictImplicitInkCollection",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "edge-sugerencias",
+        "windows":  "10,11",
+        "nombre":  "Edge: sin anuncios ni sugerencias",
+        "descripcion":  "Quita recomendaciones, compras y barra lateral de Edge mediante directivas.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+                             "valor":  "ShowRecommendationsEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+                             "valor":  "EdgeShoppingAssistantEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+                             "valor":  "HubsSidebarEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+                             "valor":  "PersonalizationReportingEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "chrome-ia",
+        "windows":  "10,11",
+        "nombre":  "Chrome: sin funciones de IA",
+        "descripcion":  "Desactiva las funciones de IA generativa de Chrome mediante directiva.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Google\\Chrome",
+                             "valor":  "GenAiDefaultSettings",
+                             "tipoValor":  "DWord",
+                             "dato":  "2"
+                         }
+                     ]
+    },
+    {
+        "id":  "navegadores-telemetria",
+        "windows":  "10,11",
+        "nombre":  "Chrome y Firefox: sin telemetría",
+        "descripcion":  "Pide a estos navegadores que no envíen datos de uso.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Google\\Chrome",
+                             "valor":  "MetricsReportingEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Mozilla\\Firefox",
+                             "valor":  "DisableTelemetry",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "paint-ia",
+        "windows":  "11",
+        "nombre":  "Paint: sin funciones de IA",
+        "descripcion":  "Quita Image Creator, Cocreator y relleno generativo.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Paint",
+                             "valor":  "DisableImageCreator",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Paint",
+                             "valor":  "DisableCocreator",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Paint",
+                             "valor":  "DisableGenerativeFill",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "click-to-do",
+        "windows":  "11",
+        "nombre":  "Desactivar Click to Do",
+        "descripcion":  "Quita las acciones de IA sobre lo que hay en pantalla.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI",
+                             "valor":  "DisableClickToDo",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "recall",
+        "windows":  "11",
+        "nombre":  "Desactivar Recall",
+        "descripcion":  "Windows no guarda capturas de tu actividad.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI",
+                             "valor":  "DisableAIDataAnalysis",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI",
+                             "valor":  "AllowRecallEnablement",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "bing-cortana",
+        "windows":  "10,11",
+        "nombre":  "Sin Bing ni Cortana en la búsqueda",
+        "descripcion":  "La búsqueda de Inicio no usa Bing ni Cortana para tu usuario.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+                             "valor":  "BingSearchEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+                             "valor":  "CortanaConsent",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Policies\\Microsoft\\Windows\\Explorer",
+                             "valor":  "DisableSearchBoxSuggestions",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "config-anuncios",
+        "windows":  "10,11",
+        "nombre":  "Sin promociones en Configuración",
+        "descripcion":  "Quita contenido sugerido y de Microsoft 365 en la app Configuración.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                             "valor":  "SubscribedContent-338393Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                             "valor":  "SubscribedContent-353694Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                             "valor":  "SubscribedContent-353696Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "pantalla-bloqueo",
+        "windows":  "10,11",
+        "nombre":  "Sin consejos en la pantalla de bloqueo",
+        "descripcion":  "Quita datos curiosos y sugerencias al bloquear.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager",
+                             "valor":  "RotatingLockScreenOverlayEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "portapapeles-nube",
+        "windows":  "10,11",
+        "nombre":  "Portapapeles sin sincronizar",
+        "descripcion":  "Lo que copiás no se sincroniza con otros equipos.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+                             "valor":  "AllowCrossDeviceClipboard",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "escritura-datos",
+        "windows":  "10,11",
+        "nombre":  "No enviar datos de escritura",
+        "descripcion":  "Windows no usa lo que escribís para mejorar el teclado.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Input\\TIPC",
+                             "valor":  "Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "buscar-dispositivo",
+        "windows":  "10,11",
+        "nombre":  "Desactivar Buscar mi dispositivo",
+        "descripcion":  "No vas a poder localizar la PC si lo pierdes. Mejor no desactivarlo en notebooks.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\FindMyDevice",
+                             "valor":  "AllowFindMyDevice",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "office-telemetria",
+        "windows":  "10,11",
+        "nombre":  "Office: sin telemetría",
+        "descripcion":  "Pide a Office que no envíe datos de uso.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Policies\\Microsoft\\Office\\16.0\\Common\\ClientTelemetry",
+                             "valor":  "DisableTelemetry",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Policies\\Microsoft\\Office\\16.0\\Common\\ClientTelemetry",
+                             "valor":  "SendTelemetry",
+                             "tipoValor":  "DWord",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "vs-telemetria",
+        "windows":  "10,11",
+        "nombre":  "Visual Studio: sin telemetría",
+        "descripcion":  "Salir del programa de mejora de Visual Studio.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\VisualStudio\\SQM",
+                             "valor":  "OptIn",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "nvidia-telemetria",
+        "windows":  "10,11",
+        "nombre":  "NVIDIA: rechazar datos de uso",
+        "descripcion":  "Indica al panel de NVIDIA que no comparta datos de uso.",
+        "categoria":  "Privacidad",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\NVIDIA Corporation\\NvControlPanel2\\Client",
+                             "valor":  "OptInOrOutPreference",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-fax",
+        "windows":  "10,11",
+        "nombre":  "Fax en manual",
+        "descripcion":  "Solo arranca si lo necesitas.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "Fax",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-retaildemo",
+        "windows":  "10,11",
+        "nombre":  "Modo demostración de tienda en manual",
+        "descripcion":  "Solo se usa en PC de exhibición.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "RetailDemo",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-mapas",
+        "windows":  "10,11",
+        "nombre":  "Mapas descargados en manual",
+        "descripcion":  "Solo arranca si usás mapas sin conexión.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "MapsBroker",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-wmp",
+        "windows":  "10,11",
+        "nombre":  "Uso compartido de Windows Media en manual",
+        "descripcion":  "Solo arranca si compartís música o video por la red.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "WMPNetworkSvc",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-diagtrack",
+        "windows":  "10,11",
+        "nombre":  "Telemetría (DiagTrack) en manual",
+        "descripcion":  "El servicio de telemetría no arranca con Windows.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "DiagTrack",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-wap",
+        "windows":  "10,11",
+        "nombre":  "Mensajes WAP push en manual",
+        "descripcion":  "Rara vez hace falta en una PC de casa.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "dmwappushservice",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "ia-servicio",
+        "windows":  "11",
+        "nombre":  "Servicio de IA de Windows en manual",
+        "descripcion":  "El servicio de IA no arranca con Windows.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "WSAIFabricSvc",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-xbox",
+        "windows":  "10,11",
+        "nombre":  "Servicios de Xbox en manual",
+        "descripcion":  "Solo si no jugás con Xbox o Game Pass: marcalo a mano. Puede afectar a esos juegos.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "XblAuthManager",
+                             "dato":  "3"
+                         },
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "XblGameSave",
+                             "dato":  "3"
+                         },
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "XboxNetApiSvc",
+                             "dato":  "3"
+                         },
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "XboxGipSvc",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-impresion",
+        "windows":  "10,11",
+        "nombre":  "Servicios de impresión en manual",
+        "descripcion":  "Solo si no usás impresora: marcalo a mano. Se iniciará cuando un programa lo pida.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "Spooler",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-buscar",
+        "windows":  "10,11",
+        "nombre":  "Indexación de búsqueda en manual",
+        "descripcion":  "Menos actividad de disco, pero la búsqueda de archivos será más lenta.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "WSearch",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-sensores",
+        "windows":  "10,11",
+        "nombre":  "Servicios de sensores en manual",
+        "descripcion":  "En PC de escritorio casi nunca hacen falta. Marcalo a mano.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "SensorService",
+                             "dato":  "3"
+                         },
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "SensrSvc",
+                             "dato":  "3"
+                         },
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "SensorDataService",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-smb",
+        "windows":  "10,11",
+        "nombre":  "Compartir archivos en red en manual",
+        "descripcion":  "Solo si no compartís carpetas ni impresoras por la red. Marcalo a mano.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Medio",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "LanmanServer",
+                             "dato":  "3"
+                         }
+                     ]
+    },
+    {
+        "id":  "servicio-bluetooth",
+        "windows":  "10,11",
+        "nombre":  "Bluetooth en manual",
+        "descripcion":  "Solo disponible si no se detecta Bluetooth en la PC.",
+        "categoria":  "Servicios",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "servicio",
+                             "valor":  "bthserv",
+                             "dato":  "3"
+                         }
+                     ],
+        "condicion":  "sinbt"
+    },
+    {
+        "id":  "avanzado-vbs",
+        "windows":  "10,11",
+        "nombre":  "Desactivar VBS e integridad de memoria",
+        "descripcion":  "Puede dar más FPS en algunas PC, pero reduce la protección contra malware. Algunos juegos con antitrampas pueden exigirla. Requiere reiniciar.",
+        "categoria":  "Avanzado",
+        "impacto":  "Medio",
+        "riesgo":  "Alto",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control\\DeviceGuard",
+                             "valor":  "EnableVirtualizationBasedSecurity",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control\\DeviceGuard\\Scenarios\\HypervisorEnforcedCodeIntegrity",
+                             "valor":  "Enabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ],
+        "aviso":  "Esto reduce la seguridad de la PC frente a malware, y algunos juegos con antitrampas pueden exigir esta protección."
+    },
+    {
+        "id":  "tema-oscuro",
+        "windows":  "10,11",
+        "nombre":  "Modo oscuro",
+        "descripcion":  "Usa el tema oscuro en Windows y en las apps.",
+        "categoria":  "Personalización",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                             "valor":  "AppsUseLightTheme",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                             "valor":  "SystemUsesLightTheme",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "ver-extensiones",
+        "windows":  "10,11",
+        "nombre":  "Mostrar extensiones de archivo",
+        "descripcion":  "Ayuda a detectar archivos falsos, como foto.jpg.exe.",
+        "categoria":  "Personalización",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                             "valor":  "HideFileExt",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "ver-ocultos",
+        "windows":  "10,11",
+        "nombre":  "Mostrar archivos ocultos",
+        "descripcion":  "Muestra archivos y carpetas ocultos en el Explorador.",
+        "categoria":  "Personalización",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                             "valor":  "Hidden",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "menu-clasico",
+        "windows":  "11",
+        "nombre":  "Menú contextual clásico",
+        "descripcion":  "Vuelve al menú de clic derecho completo de Windows 10. Se nota al reiniciar el Explorador.",
+        "categoria":  "Personalización",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "menuClasico"
+                         }
+                     ]
+    },
+    {
+        "id":  "finalizar-tarea",
+        "windows":  "11",
+        "nombre":  "Finalizar tarea en la barra de tareas",
+        "descripcion":  "Agrega Finalizar tarea al clic derecho sobre un programa.",
+        "categoria":  "Personalización",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\TaskbarDeveloperSettings",
+                             "valor":  "TaskbarEndTask",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "barra-izquierda",
+        "windows":  "11",
+        "nombre":  "Barra de tareas a la izquierda",
+        "descripcion":  "Alinea los iconos a la izquierda.",
+        "categoria":  "Personalización",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                             "valor":  "TaskbarAl",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "explorador-este-equipo",
+        "windows":  "10,11",
+        "nombre":  "El Explorador abre en Este equipo",
+        "descripcion":  "Abre Este equipo en lugar de Inicio.",
+        "categoria":  "Personalización",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                             "valor":  "LaunchTo",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ]
+    },
+    {
+        "id":  "ocultar-busqueda",
+        "windows":  "10,11",
+        "nombre":  "Ocultar la búsqueda de la barra de tareas",
+        "descripcion":  "Quita el cuadro o icono de búsqueda. Sigue funcionando desde Inicio.",
+        "categoria":  "Personalización",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+                             "valor":  "SearchboxTaskbarMode",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    }
+]

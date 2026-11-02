@@ -1,0 +1,35 @@
+# Compilados
+dist/
+bin/
+obj/
+*.exe
+*.pdb
+*.dll
+
+# Copias de versiones con fecha: de esto se encarga git
+versiones/
+
+# Código de terceros y material de investigación
+fuentes/
+
+# Datos personales: capturas de esta PC, mediciones y copias de ajustes
+screenshots/
+capturas/
+web/*.png
+*.csv
+respaldo*.json
+respaldo*.json.bak
+mediciones.json
+dns_anterior.json
+errores.log
+estado.txt
+etapas.txt
+motor.txt
+
+# Notas de trabajo con datos de la familia
+COLA.md
+
+# Investigacion, informes de otras PC y herramientas
+informe/
+herramientas/
+*.zip
