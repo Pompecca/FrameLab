@@ -203,7 +203,26 @@ namespace OptimizadorPC
             var f2 = elegido.ToList();
 
             Func<string[], int, double> num = (p, i) => { double d; return i >= 0 && double.TryParse(p[i], NumberStyles.Any, CultureInfo.InvariantCulture, out d) ? d : double.NaN; };
-            var ms = f2.Select(p => num(p, iMs)).Where(d => !double.IsNaN(d) && d > 0).ToList();
+            f2 = f2.Where(p => { double d = num(p, iMs); return !double.IsNaN(d) && d > 0; }).ToList();
+            // Al empezar y al terminar casi siempre hay pausas de carga (entrar a la partida, compilar sombreadores, volver al menú)
+            // que no son tirones del juego: en mediciones largas se dejan afuera el primer minuto y los últimos 30 segundos
+            double duracion = f2.Sum(p => num(p, iMs));
+            int recortados = 0;
+            double pausaMaxBorde = 0;
+            if (duracion > 4 * 60000)
+            {
+                double t = 0;
+                var medio = new List<string[]>();
+                foreach (var p in f2)
+                {
+                    t += num(p, iMs);
+                    if (t > 60000 && t < duracion - 30000) medio.Add(p);
+                    else pausaMaxBorde = Math.Max(pausaMaxBorde, num(p, iMs));
+                }
+                recortados = f2.Count - medio.Count;
+                f2 = medio;
+            }
+            var ms = f2.Select(p => num(p, iMs)).ToList();
             if (ms.Count < 30) throw new InvalidOperationException("Muy pocos frames para analizar (" + ms.Count + "). Medí al menos un minuto de juego.");
             double total = ms.Sum();
             var orden = ms.OrderByDescending(x => x).ToList();
@@ -242,11 +261,15 @@ namespace OptimizadorPC
 
             var v = new StringBuilder();
             double ratio = res.Fps > 0 ? res.Bajo1 / res.Fps : 1;
+            if (recortados > 0) v.Append("Se analizó la partida sin el primer minuto ni los últimos 30 segundos, donde están las cargas" + (pausaMaxBorde > 250 ? " (ahí hubo pausas de hasta " + (pausaMaxBorde / 1000).ToString("0.0") + " s, normales al entrar y salir)" : "") + ". ");
             v.Append("Promedio de " + Math.Round(res.Fps) + " FPS, con mínimos del 1 % de " + Math.Round(res.Bajo1) + " FPS. ");
-            if (ratio < 0.5) v.Append("Es muy irregular: esos saltos son lo que notás como tirones. ");
+            double pctPicos = 100.0 * res.Picos / ms.Count;
+            // Con FPS altos los mínimos del 1 % siempre quedan lejos del promedio: lo que se siente son los frames muy lentos
+            double minutos = Math.Max(1, res.Segundos / 60);
+            if (pctPicos < 0.2) v.Append("Fluido: " + res.Picos + " tirones en " + Math.Round(minutos) + " minutos, casi no se notan. ");
+            else if (ratio < 0.5) v.Append("Es muy irregular: esos saltos son lo que notás como tirones. ");
             else if (ratio < 0.7) v.Append("Algo irregular. ");
             else v.Append("Bastante estable. ");
-            double pctPicos = 100.0 * res.Picos / ms.Count;
             v.Append(res.Picos + " frames de más de 25 ms (" + pctPicos.ToString("0.0") + " %). ");
             // Muchos frames igual de lentos no son tirones: suele ser un tope, y la CPU "ocupada" incluye esa espera
             if (ratio >= 0.85 && pctPicos > 80) v.Append("Los FPS son tan constantes que parece un límite activo (menú del juego, V-Sync o un tope de FPS), no un problema de hardware. Medí dentro de una partida. ");

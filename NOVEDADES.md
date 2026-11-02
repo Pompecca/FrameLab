@@ -1,3 +1,10 @@
+# Novedades de FrameLab 0.8.2
+
+## Cambios en 0.8.2
+
+- **Medir partida, más justo:** en mediciones de más de 4 minutos se dejan afuera el primer minuto y los últimos 30 segundos. Ahí están las cargas: entrar a la partida, compilar los sombreadores y volver al menú. En la medición real de Fortnite esas pausas, de hasta 3 segundos, bajaban los mínimos del 1 % a 20 FPS, cuando durante el juego eran de 66.
+- Si los tirones son menos del 0,2 % de los frames, el resultado dice que el juego va fluido en lugar de "muy irregular".
+
 # Novedades de FrameLab 0.8.1
 
 ## Cambios en 0.8.1 (corrección importante)
