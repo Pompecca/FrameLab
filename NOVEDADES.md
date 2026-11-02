@@ -1,3 +1,18 @@
+# Novedades de FrameLab 0.8.0
+
+## Cambios en 0.8.0
+
+- **Quitar apps de Windows:** la sección reemplaza a "Apps preinstaladas" y ahora se ve también en el modo simple.
+  - **Copilot:** un botón quita la app, lo desactiva con una directiva y oculta su botón de la barra de tareas. Se deshace desde Optimizaciones.
+  - **Microsoft Edge:** "Desactivar lo molesto de Edge" hace que no arranque solo, que no quede abierto en segundo plano y que no recree su acceso directo; después abre la ventana para elegir otro navegador. Es reversible. Desinstalarlo solo aparece en Opciones avanzadas, con doble confirmación y con el desinstalador del propio Edge. Si Windows no lo permite en tu región, la app lo dice. WebView2 no se toca, y hay un botón para reinstalar Edge con winget.
+  - **Apps por grupo:**
+    - **Recomendado quitar:** Noticias, Tiempo, promociones, Cortana, Clipchamp y otras. Vienen marcadas.
+    - **Opcional:** apps que algunas personas usan. Vienen sin marcar.
+    - **Xbox:** con aviso, porque las necesitan Game Pass y algunos juegos.
+
+    Hay una opción para quitarlas también en las cuentas nuevas. Las apps quitadas quedan en una lista con botón **Reinstalar**. Solo se ofrecen apps de una lista conocida: los componentes del sistema, como la Store, WebView2, .NET o VCLibs, nunca aparecen.
+- **Página web** (`web\index.html`): rehecha con las funciones nuevas, los pasos de uso y capturas nuevas.
+
 # Novedades de FrameLab 0.7.0
 
 ## Cambios en 0.7.0

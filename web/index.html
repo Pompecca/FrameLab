@@ -4,99 +4,162 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FrameLab</title>
-<meta name="description" content="Optimizá Windows con ajustes reversibles y medí si tus juegos mejoraron de verdad.">
+<meta name="description" content="Optimizá Windows para jugar con un botón, sacá lo que no usás y medí si tus juegos mejoraron de verdad. Todo se puede deshacer.">
 <link rel="icon" href="logo.png">
 <style>
-:root{--fondo:#0f1218;--lateral:#141821;--tarjeta:#1a1f2b;--borde:#2a3140;--tinta:#eef1f6;--suave:#9aa5b8;--acento:#22c7d6;--acento-tinta:#06242a}
+:root{--fondo:#0b0e14;--lateral:#141821;--tarjeta:#1a1f2b;--borde:#2a3140;--tinta:#eef1f6;--suave:#9aa5b8;--acento:#22c7d6;--acento-tinta:#06242a;--violeta:#7a5cff;--ok:#3dd68c}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--fondo);color:var(--tinta);font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif}
-.ancho{max-width:1040px;margin:0 auto;padding:0 20px}
-header{border-bottom:1px solid var(--borde);background:var(--lateral)}
-.barra{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:14px;padding-bottom:14px}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif;
+  background-image:radial-gradient(900px 600px at 85% -5%,rgba(34,199,214,.18),transparent 60%),radial-gradient(800px 600px at 0% 100%,rgba(122,92,255,.12),transparent 60%);background-attachment:fixed}
+a{color:var(--acento)}
+.ancho{max-width:1080px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:5;border-bottom:1px solid var(--borde);background:rgba(20,24,33,.88);backdrop-filter:blur(8px)}
+.barra{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:12px}
 .marca{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;color:inherit;text-decoration:none}
-.marca img{width:34px;height:34px}
+.marca img{width:32px;height:32px}
 nav a{color:var(--suave);text-decoration:none;margin-left:18px;font-size:15px}
 nav a:hover{color:var(--tinta)}
-.portada{padding:72px 20px 48px;text-align:center}
-h1{font-size:clamp(34px,6vw,54px);line-height:1.12;margin:0 auto 18px;max-width:780px;letter-spacing:-.02em}
-.portada p{color:var(--suave);font-size:19px;max-width:640px;margin:0 auto 28px}
-.boton{display:inline-block;background:var(--acento);color:var(--acento-tinta);font-weight:600;padding:12px 24px;border-radius:9px;text-decoration:none}
+.portada{padding:76px 20px 40px;text-align:center}
+.etiqueta{display:inline-block;border:1px solid var(--borde);background:var(--tarjeta);color:var(--suave);border-radius:999px;padding:4px 14px;font-size:13px;margin-bottom:18px}
+h1{font-size:clamp(34px,6vw,56px);line-height:1.1;margin:0 auto 18px;max-width:820px;letter-spacing:-.02em}
+h1 span{color:var(--acento)}
+.portada p{color:var(--suave);font-size:19px;max-width:660px;margin:0 auto 28px}
+.boton{display:inline-block;background:var(--acento);color:var(--acento-tinta);font-weight:600;padding:12px 26px;border-radius:9px;text-decoration:none}
+.boton.sec{background:transparent;color:var(--tinta);border:1px solid var(--borde);margin-left:8px}
 .boton:hover{opacity:.87}
-.nota{color:var(--suave);font-size:14px;margin-top:12px}
-.captura{display:block;width:100%;height:auto;border:1px solid var(--borde);border-radius:12px}
-section.ancho{padding:44px 20px}
-h2{font-size:30px;margin:0 0 8px;letter-spacing:-.01em}
-.intro{color:var(--suave);margin:0 0 26px;max-width:700px}
-.rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.tarjeta{background:var(--tarjeta);border:1px solid var(--borde);border-radius:12px;padding:20px}
+.nota{color:var(--suave);font-size:14px;margin-top:14px}
+.captura{display:block;width:100%;height:auto;border:1px solid var(--borde);border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+section.ancho{padding:56px 20px}
+h2{font-size:32px;margin:0 0 8px;letter-spacing:-.01em}
+.intro{color:var(--suave);margin:0 0 28px;max-width:720px}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.tarjeta{background:rgba(26,31,43,.92);border:1px solid var(--borde);border-radius:12px;padding:20px}
 .tarjeta h3{margin:0 0 6px;font-size:18px}
 .tarjeta p{margin:0;color:var(--suave);font-size:15px}
-.dos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tarjeta .nuevo{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--acento-tinta);background:var(--acento);border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+.pasos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;counter-reset:paso}
+.paso{background:rgba(26,31,43,.92);border:1px solid var(--borde);border-radius:12px;padding:20px 20px 20px 64px;position:relative}
+.paso::before{counter-increment:paso;content:counter(paso);position:absolute;left:18px;top:18px;width:32px;height:32px;border-radius:50%;background:var(--acento);color:var(--acento-tinta);font-weight:700;display:grid;place-items:center}
+.paso h3{margin:0 0 4px;font-size:17px}
+.paso p{margin:0;color:var(--suave);font-size:15px}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .dos figure{margin:0}
-figcaption{color:var(--suave);font-size:14px;margin-top:8px}
+figcaption{color:var(--suave);font-size:14px;margin-top:10px}
+.lado{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center}
+.lado ul{margin:0;padding-left:20px;color:var(--suave)}
+.lado li{margin:6px 0}
+.lado li b{color:var(--tinta);font-weight:600}
 ul.no{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 24px}
 ul.no li{color:var(--suave);padding-left:24px;position:relative}
 ul.no li::before{content:"×";color:#ff7b72;font-weight:700;position:absolute;left:4px}
+ul.si li::before{content:"✓";color:var(--ok)}
 footer{border-top:1px solid var(--borde);padding:24px 0;color:var(--suave);font-size:14px}
-@media(max-width:700px){.dos{grid-template-columns:1fr}nav a:first-child{margin-left:0}.portada{padding:48px 20px 32px}}
+@media(max-width:760px){.dos,.lado{grid-template-columns:1fr}nav a:not(:last-child){display:none}.portada{padding:48px 20px 28px}.boton.sec{margin:10px 0 0}}
 </style>
 </head>
 <body>
 <header>
   <div class="ancho barra">
     <a class="marca" href="#"><img src="logo.png" alt="">FrameLab</a>
-    <nav><a href="#funciones">Funciones</a><a href="#honesta">Sin humo</a><a href="#descargar">Descargar</a></nav>
+    <nav><a href="#como">Cómo se usa</a><a href="#funciones">Funciones</a><a href="#partida">Modo partida</a><a href="#honesta">Sin humo</a><a href="#descargar">Descargar</a></nav>
   </div>
 </header>
 <main>
   <div class="ancho portada">
-    <h1>Optimizá Windows y comprobá si de verdad mejoró</h1>
-    <p>FrameLab revisa tu PC, aplica ajustes que podés deshacer y mide tus juegos antes y después.</p>
-    <a class="boton" href="#descargar">Descargar para Windows</a>
-    <div class="nota">Sin instalación. Windows 11 y Windows 10 versión 2004 o más nuevo.</div>
+    <div class="etiqueta">Beta 0.8.0 · Gratis · En español</div>
+    <h1>Tu PC lista para jugar, <span>con un botón</span>. Y si no te gusta, la volvés atrás.</h1>
+    <p>FrameLab te dice qué frena tu PC, aplica solo ajustes seguros, saca lo que Windows trae y no usás, y mide tus partidas para que veas si de verdad mejoró.</p>
+    <a class="boton" href="#descargar">Descargar para Windows</a><a class="boton sec" href="#como">Cómo se usa</a>
+    <div class="nota">Portable: un solo archivo, sin instalación. Windows 11 y Windows 10 versión 2004 o más nuevo.</div>
   </div>
-  <div class="ancho"><img class="captura" src="optimizaciones.png" alt="Sección Optimizaciones de FrameLab, con ajustes y su estado" width="1104" height="721"></div>
+  <div class="ancho"><img class="captura" src="simple.png" alt="Pantalla Optimizar de FrameLab, con el botón Optimizar y la lista de qué frena la PC" width="1104" height="721"></div>
+
+  <section id="como" class="ancho">
+    <h2>Cómo se usa, en 3 pasos</h2>
+    <p class="intro">No hace falta saber de Windows. Lo avanzado está escondido hasta que lo pidas.</p>
+    <div class="pasos">
+      <div class="paso"><h3>Descargá y abrí</h3><p>Un solo archivo, FrameLab.exe. Aceptá el permiso de administrador.</p></div>
+      <div class="paso"><h3>Tocá Optimizar</h3><p>Crea un punto de restauración y aplica solo los ajustes seguros que sirven en tu PC.</p></div>
+      <div class="paso"><h3>Reiniciá y jugá</h3><p>Si algo no te gusta, tocá Deshacer todo y queda como estaba.</p></div>
+    </div>
+  </section>
 
   <section id="funciones" class="ancho">
-    <h2>Todo en un solo lugar</h2>
-    <p class="intro">Cada ajuste indica su impacto y su riesgo, y se puede revertir.</p>
+    <h2>Todo lo que hace</h2>
+    <p class="intro">Cada cambio dice qué hace, cuánto ayuda y qué riesgo tiene, y se puede deshacer.</p>
     <div class="rejilla">
-      <div class="tarjeta"><h3>Medí tus partidas</h3><p>FPS, mínimos y tirones, con una explicación clara de qué los causa y una comparación de antes y después.</p></div>
-      <div class="tarjeta"><h3>96 ajustes reversibles</h3><p>Rendimiento, privacidad, energía y servicios. Elegí los perfiles Seguro, Gamer o Avanzado, o marcá uno por uno.</p></div>
-      <div class="tarjeta"><h3>Revisá tu hardware</h3><p>Detecta RAM en un solo canal, juegos en disco duro, un monitor por debajo de sus Hz y otros problemas.</p></div>
-      <div class="tarjeta"><h3>Ajustes para tus juegos</h3><p>Recomendaciones para Fortnite, Valorant, CS2, Minecraft y Roblox, con un límite de FPS según tu monitor.</p></div>
-      <div class="tarjeta"><h3>Monitor en vivo</h3><p>Temperatura, uso y avisos cuando el hardware se frena.</p></div>
-      <div class="tarjeta"><h3>Limpieza e instalación</h3><p>Liberá espacio, controlá los programas de inicio e instalá apps desde fuentes oficiales.</p></div>
+      <div class="tarjeta"><h3>Qué frena tu PC</h3><p>Ordena lo que más limita tus juegos: placa de video, disco lleno, RAM, procesador, drivers, apagados o programas al iniciar. Si los ajustes de Windows van a ayudar poco, te lo dice.</p></div>
+      <div class="tarjeta"><h3>102 ajustes reversibles</h3><p>Rendimiento, juegos, energía, privacidad y servicios, en tres perfiles: Seguro, Gamer y Avanzado. Los que no sirven en tu PC aparecen como "No aplica".</p></div>
+      <div class="tarjeta"><h3>Modo partida<span class="nuevo">NUEVO</span></h3><p>Cierra lo que elijas antes de jugar, le da prioridad al juego y al terminar deja todo como estaba.</p></div>
+      <div class="tarjeta"><h3>Quitar apps de Windows<span class="nuevo">NUEVO</span></h3><p>Copilot, promociones y apps que casi nadie usa. Edge deja de molestar. Cada app se puede reinstalar.</p></div>
+      <div class="tarjeta"><h3>Tus juegos, configurados</h3><p>Ajusta Fortnite, Roblox y Minecraft desde sus archivos oficiales, con copia para volver atrás. Para Valorant y CS2 te da una guía.</p></div>
+      <div class="tarjeta"><h3>Medí tus partidas</h3><p>FPS, mínimos y tirones, con una explicación de qué los causa y una comparación de antes y después.</p></div>
+      <div class="tarjeta"><h3>Ordenar escritorio<span class="nuevo">NUEVO</span></h3><p>Pone los archivos sueltos del escritorio o de Descargas en carpetas por tipo. Te muestra la lista antes y se puede deshacer.</p></div>
+      <div class="tarjeta"><h3>Espacio y limpieza</h3><p>Muestra qué juegos y carpetas ocupan más y libera espacio sin riesgo. No borra la caché de sombreadores.</p></div>
+      <div class="tarjeta"><h3>Fondo FrameLab<span class="nuevo">NUEVO</span></h3><p>Un fondo propio para la app y para el escritorio, a la resolución de tu monitor, con botón para volver al anterior.</p></div>
+    </div>
+  </section>
+
+  <section id="partida" class="ancho">
+    <div class="lado">
+      <img class="captura" src="juegos.png" alt="Sección Juegos con el Modo partida" width="1104" height="721" loading="lazy">
+      <div>
+        <h2>Modo partida</h2>
+        <p class="intro">Activalo antes de abrir el juego. Mientras dura:</p>
+        <ul>
+          <li><b>Cierra los programas que marques</b> (navegador, Discord, launchers) y los vuelve a abrir al terminar.</li>
+          <li><b>Prioridad alta para el juego</b> y baja para lo que queda abierto.</li>
+          <li><b>Pausa la búsqueda de Windows</b> y usa el plan de alto rendimiento.</li>
+          <li><b>Todo vuelve a como estaba</b>, aunque la app se cierre de golpe.</li>
+        </ul>
+        <p class="nota">No toca procesos de Windows ni antitrampas. Se nota más en PCs con poca RAM o procesadores de 4 hilos.</p>
+      </div>
     </div>
   </section>
 
   <section class="ancho">
     <div class="dos">
-      <figure><img class="captura" src="medir.png" alt="Sección Medir partida" width="1104" height="721" loading="lazy"><figcaption>Medí una partida y compará.</figcaption></figure>
-      <figure><img class="captura" src="juegos.png" alt="Sección Juegos con recomendaciones" width="1104" height="721" loading="lazy"><figcaption>Recomendaciones para tus juegos.</figcaption></figure>
-      <figure><img class="captura" src="resumen.png" alt="Sección Resumen" width="1104" height="721" loading="lazy"><figcaption>El estado de tu PC de un vistazo.</figcaption></figure>
-      <figure><img class="captura" src="diagnostico.png" alt="Sección Diagnóstico" width="1104" height="721" loading="lazy"><figcaption>Qué tiene tu PC y qué conviene revisar.</figcaption></figure>
+      <figure><img class="captura" src="apps.png" alt="Sección Quitar apps de Windows" width="1104" height="721" loading="lazy"><figcaption>Quitá Copilot y las apps que no usás.</figcaption></figure>
+      <figure><img class="captura" src="optimizaciones.png" alt="Sección Optimizaciones" width="1104" height="721" loading="lazy"><figcaption>Cada ajuste con su impacto, su riesgo y un botón para revertir.</figcaption></figure>
+      <figure><img class="captura" src="ordenar.png" alt="Sección Ordenar escritorio" width="1104" height="721" loading="lazy"><figcaption>Tu escritorio ordenado en un clic.</figcaption></figure>
+      <figure><img class="captura" src="personalizacion.png" alt="Sección Personalización" width="1104" height="721" loading="lazy"><figcaption>El fondo FrameLab para la app y el escritorio.</figcaption></figure>
     </div>
   </section>
 
   <section id="honesta" class="ancho">
-    <h2>Lo que no vas a encontrar</h2>
-    <p class="intro">No prometemos un número de FPS: depende de cada PC. Por eso la app lo mide. Tampoco incluye lo que da poco y arriesga mucho.</p>
-    <ul class="no">
-      <li>Limpiadores de RAM</li>
-      <li>Desactivar Defender o SmartScreen</li>
-      <li>Desactivar actualizaciones para siempre</li>
-      <li>Quitar el archivo de paginación</li>
-      <li>Drivers de páginas no oficiales</li>
-      <li>Tocar juegos con antitrampas</li>
-    </ul>
+    <h2>Sin humo</h2>
+    <p class="intro">No prometemos "+200 % FPS": depende de cada PC, y por eso la app lo mide. Si tu placa de video es lo que limita, te lo dice y te sugiere qué cambiar, en lugar de venderte ajustes que no sirven.</p>
+    <div class="dos">
+      <div class="tarjeta">
+        <h3>Lo que sí hace</h3>
+        <ul class="no si">
+          <li>Punto de restauración antes de cambiar nada</li>
+          <li>Guarda cada valor anterior para revertir</li>
+          <li>Si un ajuste falla, lo deshace solo</li>
+          <li>Funciona en Windows 10 y 11</li>
+        </ul>
+      </div>
+      <div class="tarjeta">
+        <h3>Lo que nunca va a hacer</h3>
+        <ul class="no">
+          <li>Limpiadores de RAM</li>
+          <li>Desactivar Defender o SmartScreen</li>
+          <li>Desactivar las actualizaciones para siempre</li>
+          <li>Quitar el archivo de paginación</li>
+          <li>Drivers de páginas no oficiales</li>
+          <li>Tocar juegos con antitrampas</li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <section id="descargar" class="ancho">
     <div class="tarjeta">
       <h2>Descargar</h2>
-      <p>Disponible pronto. FrameLab pide permiso de administrador porque cambia ajustes de Windows, y antes de aplicarlos crea un punto de restauración.</p>
+      <p>FrameLab está en beta. Descargá <b>FrameLab.exe</b> desde la página de versiones, abrilo y aceptá el permiso de administrador: lo pide porque cambia ajustes de Windows. Antes de aplicar nada crea un punto de restauración.</p>
+      <p style="margin-top:10px">Si Windows muestra "Windows protegió su PC", tocá <b>Más información</b> y después <b>Ejecutar de todas formas</b>. Aparece porque la app todavía no tiene firma digital.</p>
+      <p style="margin-top:16px"><a class="boton" href="https://github.com/Pompecca/FrameLab/releases">Ir a las descargas</a></p>
     </div>
   </section>
 </main>

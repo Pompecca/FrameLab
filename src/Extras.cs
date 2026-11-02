@@ -360,44 +360,133 @@ namespace OptimizadorPC
         }
     }
 
-    public class AppQuitable { public string Nombre, Paquete; public bool Instalada; }
+    public class AppQuitable { public string Nombre, Paquete, Grupo, Aviso; public bool Instalada, Quitada; }
 
+    public class AppQuitada { public string Paquete { get; set; } public string Nombre { get; set; } public string Fecha { get; set; } public bool ParaNuevas { get; set; } }
+
+    // Solo se ofrecen apps de esta lista: los paquetes del sistema, de seguridad y los que usan otras apps
+    // (VCLibs, .NET, UI.Xaml, WebView2, Store, App Installer...) nunca aparecen
     public static class Apps
     {
+        // Grupo: recomendado (se marca solo), opcional (lo usa alguna gente), xbox (lo necesitan Game Pass y algunos juegos)
         static readonly string[,] Lista = {
-            {"Noticias","Microsoft.BingNews"}, {"El Tiempo","Microsoft.BingWeather"}, {"Búsqueda de Bing","Microsoft.BingSearch"},
-            {"Obtener ayuda","Microsoft.GetHelp"}, {"Consejos","Microsoft.Getstarted"}, {"Microsoft 365 (acceso directo)","Microsoft.MicrosoftOfficeHub"},
-            {"Solitaire Collection","Microsoft.MicrosoftSolitaireCollection"}, {"Sticky Notes","Microsoft.MicrosoftStickyNotes"}, {"Personas","Microsoft.People"},
-            {"To Do","Microsoft.Todos"}, {"Centro de opiniones","Microsoft.WindowsFeedbackHub"}, {"Mapas","Microsoft.WindowsMaps"},
-            {"Grabadora de sonido","Microsoft.WindowsSoundRecorder"}, {"Alarmas y reloj","Microsoft.WindowsAlarms"}, {"Cámara","Microsoft.WindowsCamera"},
-            {"Reproductor multimedia","Microsoft.ZuneMusic"}, {"Películas y TV","Microsoft.ZuneVideo"}, {"Clipchamp","Clipchamp.Clipchamp"},
-            {"Teams","MSTeams"}, {"Enlace móvil","Microsoft.YourPhone"}, {"Outlook nuevo","Microsoft.OutlookForWindows"},
-            {"Asistencia rápida","MicrosoftCorporationII.QuickAssist"}, {"Family","MicrosoftCorporationII.MicrosoftFamily"}, {"Power Automate","Microsoft.PowerAutomateDesktop"}
+            {"Copilot","Microsoft.Copilot","recomendado",""},
+            {"Noticias","Microsoft.BingNews","recomendado",""}, {"El Tiempo","Microsoft.BingWeather","recomendado",""}, {"Búsqueda de Bing","Microsoft.BingSearch","recomendado",""},
+            {"Obtener ayuda","Microsoft.GetHelp","recomendado",""}, {"Consejos","Microsoft.Getstarted","recomendado",""}, {"Microsoft 365 (acceso directo)","Microsoft.MicrosoftOfficeHub","recomendado",""},
+            {"Solitaire Collection","Microsoft.MicrosoftSolitaireCollection","recomendado",""}, {"Personas","Microsoft.People","recomendado",""},
+            {"Centro de opiniones","Microsoft.WindowsFeedbackHub","recomendado",""}, {"Mapas","Microsoft.WindowsMaps","recomendado",""}, {"Películas y TV","Microsoft.ZuneVideo","recomendado",""},
+            {"Clipchamp","Clipchamp.Clipchamp","recomendado",""}, {"Teams (personal)","MSTeams","recomendado",""}, {"Teams (personal, versión vieja)","MicrosoftTeams","recomendado",""},
+            {"Cortana","Microsoft.549981C3F5F10","recomendado",""}, {"Power Automate","Microsoft.PowerAutomateDesktop","recomendado",""}, {"Family","MicrosoftCorporationII.MicrosoftFamily","recomendado",""},
+            {"Dev Home","Microsoft.Windows.DevHome","recomendado",""}, {"Portal de realidad mixta","Microsoft.MixedReality.Portal","recomendado",""}, {"Visor 3D","Microsoft.Microsoft3DViewer","recomendado",""},
+            {"Skype","Microsoft.SkypeApp","recomendado",""}, {"Correo y Calendario (versión vieja)","microsoft.windowscommunicationsapps","recomendado",""}, {"LinkedIn","7EE7776C.LinkedInforWindows","recomendado",""},
+            {"Disney+ (promoción)","Disney.37853FA22FAF4","recomendado",""}, {"TikTok (promoción)","BytedancePte.Ltd.TikTok","recomendado",""}, {"Candy Crush Saga (promoción)","king.com.CandyCrushSaga","recomendado",""},
+            {"Candy Crush Soda Saga (promoción)","king.com.CandyCrushSodaSaga","recomendado",""}, {"Facebook (promoción)","Facebook.Facebook","recomendado",""}, {"Prime Video (promoción)","AmazonVideo.PrimeVideo","recomendado",""},
+            {"To Do","Microsoft.Todos","opcional",""}, {"Sticky Notes","Microsoft.MicrosoftStickyNotes","opcional",""}, {"Grabadora de sonido","Microsoft.WindowsSoundRecorder","opcional",""},
+            {"Alarmas y reloj","Microsoft.WindowsAlarms","opcional",""}, {"Cámara","Microsoft.WindowsCamera","opcional","Algunas videollamadas y escáneres de documentos la usan."},
+            {"Reproductor multimedia","Microsoft.ZuneMusic","opcional","Es el reproductor de música y video de Windows."}, {"Enlace móvil","Microsoft.YourPhone","opcional",""},
+            {"Outlook nuevo","Microsoft.OutlookForWindows","opcional",""}, {"OneNote","Microsoft.Office.OneNote","opcional",""}, {"Asistencia rápida","MicrosoftCorporationII.QuickAssist","opcional","Sirve para que alguien te ayude a distancia."},
+            {"Spotify","SpotifyAB.SpotifyMusic","opcional",""}, {"Netflix","4DF9E0F8.Netflix","opcional",""},
+            {"Widgets","MicrosoftWindows.Client.WebExperience","opcional","El panel de widgets deja de funcionar."},
+            {"App de Xbox","Microsoft.GamingApp","xbox","Hace falta para Game Pass y los juegos de la app de Xbox."},
+            {"Xbox Game Bar","Microsoft.XboxGamingOverlay","xbox","Es el panel de Windows + G: capturas, rendimiento y chat."},
+            {"Inicio de sesión de Xbox","Microsoft.XboxIdentityProvider","xbox","Lo usan los juegos que inician sesión con Xbox, como Minecraft Bedrock y algunos de Microsoft Store."},
+            {"Ventanas de Xbox","Microsoft.Xbox.TCUI","xbox","Lo usan los juegos con cuenta de Xbox para invitaciones y perfiles."},
+            {"Voz a texto de Xbox","Microsoft.XboxSpeechToTextOverlay","xbox",""}
         };
+
+        public static readonly string[] MejorDejar = { "Microsoft Store", "Calculadora", "Fotos", "Bloc de notas", "Terminal", "Recortes", "Paint", "Instalador de aplicación (winget)", "Seguridad de Windows" };
+
+        static string RutaRegistro { get { return Path.Combine(Medicion.Carpeta, "apps_quitadas.json"); } }
+
+        // Solo para pruebas: reemplaza la consulta a Windows
+        public static Func<HashSet<string>> Instaladas = () =>
+        {
+            int c;
+            return new HashSet<string>(Util.Ps("Get-AppxPackage | ForEach-Object { $_.Name }", out c).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries), StringComparer.OrdinalIgnoreCase);
+        };
+        public static bool Simular;
+
+        public static List<AppQuitada> Quitadas()
+        {
+            try { return (File.Exists(RutaRegistro) ? new JavaScriptSerializer().Deserialize<List<AppQuitada>>(File.ReadAllText(RutaRegistro, Encoding.UTF8)) : null) ?? new List<AppQuitada>(); }
+            catch (Exception) { return new List<AppQuitada>(); }
+        }
 
         public static List<AppQuitable> Listar()
         {
-            int c;
-            var inst = new HashSet<string>(Util.Ps("Get-AppxPackage | ForEach-Object { $_.Name }", out c).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries), StringComparer.OrdinalIgnoreCase);
+            var inst = Instaladas();
+            var quitadas = new HashSet<string>(Quitadas().Select(q => q.Paquete), StringComparer.OrdinalIgnoreCase);
             var l = new List<AppQuitable>();
             for (int i = 0; i < Lista.GetLength(0); i++)
-                l.Add(new AppQuitable { Nombre = Lista[i, 0], Paquete = Lista[i, 1], Instalada = inst.Contains(Lista[i, 1]) });
+            {
+                bool esta = inst.Contains(Lista[i, 1]);
+                if (!esta && !quitadas.Contains(Lista[i, 1])) continue;
+                l.Add(new AppQuitable { Nombre = Lista[i, 0], Paquete = Lista[i, 1], Grupo = Lista[i, 2], Aviso = Lista[i, 3], Instalada = esta, Quitada = !esta });
+            }
             return l;
         }
 
-        public static void Quitar(AppQuitable a)
+        // Para tu cuenta y, si lo marcás, también para las cuentas nuevas de esta PC
+        public static void Quitar(AppQuitable a, bool paraNuevas)
         {
-            int c;
-            Util.Ps("Get-AppxPackage -Name '" + a.Paquete + "' | Remove-AppxPackage -ErrorAction Stop", out c, 300000);
-            if (c != 0) throw new InvalidOperationException("Windows no permitió quitar " + a.Nombre + ".");
+            if (!Lista.Cast<string>().Contains(a.Paquete)) throw new InvalidOperationException("Esa app no está en la lista de las que se pueden quitar.");
+            if (!Simular)
+            {
+                int c;
+                Util.Ps("Get-AppxPackage -Name '" + a.Paquete + "' | Remove-AppxPackage -ErrorAction Stop", out c, 300000);
+                if (c != 0) throw new InvalidOperationException("Windows no permitió quitar " + a.Nombre + ".");
+                if (paraNuevas)
+                    Util.Ps("Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -eq '" + a.Paquete + "' } | Remove-AppxProvisionedPackage -Online -ErrorAction Stop | Out-Null", out c, 300000);
+            }
+            var l = Quitadas().Where(q => !q.Paquete.Equals(a.Paquete, StringComparison.OrdinalIgnoreCase)).ToList();
+            l.Add(new AppQuitada { Paquete = a.Paquete, Nombre = a.Nombre, Fecha = DateTime.Now.ToString("dd/MM/yyyy HH:mm"), ParaNuevas = paraNuevas });
+            Util.EscribirSeguro(RutaRegistro, new JavaScriptSerializer().Serialize(l), Encoding.UTF8, null);
         }
 
-        public static string EnlaceTienda(AppQuitable a) { return "ms-windows-store://search/?query=" + Uri.EscapeDataString(a.Nombre); }
+        // Cuando la reinstalás desde la Tienda, deja de figurar como quitada
+        public static void OlvidarSiVolvio()
+        {
+            var inst = Instaladas();
+            var l = Quitadas();
+            var quedan = l.Where(q => !inst.Contains(q.Paquete)).ToList();
+            if (quedan.Count != l.Count) Util.EscribirSeguro(RutaRegistro, new JavaScriptSerializer().Serialize(quedan), Encoding.UTF8, null);
+        }
+
+        public static string EnlaceTienda(AppQuitable a) { return "ms-windows-store://search/?query=" + Uri.EscapeDataString(a.Nombre.Split('(')[0].Trim()); }
+
+        // ---------- Edge ----------
+        // Solo el desinstalador del propio Edge. WebView2, que usan otras apps, está en otra carpeta y no se toca
+        public static string InstaladorEdge()
+        {
+            string app = new[] { Environment.SpecialFolder.ProgramFilesX86, Environment.SpecialFolder.ProgramFiles }.Select(f => Path.Combine(Environment.GetFolderPath(f), @"Microsoft\Edge\Application")).FirstOrDefault(Directory.Exists);
+            if (app == null) return null;
+            return Directory.GetDirectories(app).Select(d => Path.Combine(d, @"Installer\setup.exe")).Where(File.Exists)
+                .OrderByDescending(r => { System.Version v; return System.Version.TryParse(Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(r))), out v) ? v : new System.Version(0, 0); }).FirstOrDefault();
+        }
+
+        // Según la versión de Windows, Edge está en Archivos de programa o en Archivos de programa (x86)
+        public static bool EdgeInstalado { get { return new[] { Environment.SpecialFolder.ProgramFilesX86, Environment.SpecialFolder.ProgramFiles }.Any(f => File.Exists(Path.Combine(Environment.GetFolderPath(f), @"Microsoft\Edge\Application\msedge.exe"))); } }
+
+        public static void DesinstalarEdge()
+        {
+            string setup = InstaladorEdge();
+            if (setup == null) throw new InvalidOperationException("No se encontró el desinstalador de Edge.");
+            int c;
+            Util.Correr(setup, "--uninstall --system-level --force-uninstall", out c, 300000);
+            if (EdgeInstalado) throw new InvalidOperationException("Windows no permitió desinstalar Edge. En la mayoría de los países solo se puede desinstalar en Europa; usá \"Desactivar lo molesto de Edge\" y elegí otro navegador como predeterminado.");
+        }
+
+        public static void ReinstalarEdge()
+        {
+            int c;
+            Util.Correr("winget", "install --id Microsoft.Edge --exact --source winget --silent --accept-package-agreements --accept-source-agreements --disable-interactivity", out c, 600000);
+            if (c != 0 && !EdgeInstalado) throw new InvalidOperationException("No se pudo reinstalar Edge (código " + c + "). Bajalo de microsoft.com/edge.");
+        }
     }
 
     public static class Version
     {
-        public const string Actual = "0.7.0";
+        public const string Actual = "0.8.0";
         static string RutaConfig { get { return Path.Combine(Medicion.Carpeta, "actualizaciones.txt"); } }
         public const string Repositorio = "Pompecca/FrameLab";
         public const string PaginaDescargas = "https://github.com/" + Repositorio + "/releases";

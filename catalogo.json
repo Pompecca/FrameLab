@@ -1176,7 +1176,7 @@
         "id":  "copilot",
         "windows":  "11",
         "nombre":  "Desactivar Copilot",
-        "descripcion":  "Desactiva Copilot de Windows mediante directiva.",
+        "descripcion":  "Desactiva Copilot de Windows con una directiva y oculta su botón de la barra de tareas.",
         "categoria":  "Privacidad",
         "impacto":  "Bajo",
         "riesgo":  "Bajo",
@@ -1191,6 +1191,13 @@
                              "valor":  "TurnOffWindowsCopilot",
                              "tipoValor":  "DWord",
                              "dato":  "1"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+                             "valor":  "ShowCopilotButton",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
                          }
                      ]
     },
@@ -2446,5 +2453,40 @@
                          }
                      ],
         "soloEscritorio":  true
+    },
+    {
+        "id":  "edge-molesto",
+        "windows":  "10,11",
+        "nombre":  "Desactivar lo molesto de Edge",
+        "descripcion":  "Edge deja de abrirse en segundo plano al iniciar Windows y de seguir abierto al cerrarlo, y no vuelve a crear su acceso directo en el escritorio al actualizarse. No desinstala nada.",
+        "categoria":  "Sistema",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+                             "valor":  "StartupBoostEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge",
+                             "valor":  "BackgroundModeEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SOFTWARE\\Policies\\Microsoft\\EdgeUpdate",
+                             "valor":  "CreateDesktopShortcutDefault",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
     }
 ]

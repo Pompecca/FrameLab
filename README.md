@@ -2,7 +2,7 @@
 
 Optimizador de Windows para juegos, en español. Es portable: un solo `.exe`, sin instalación.
 
-> Estado: beta privada (0.7.0). Probado en Windows 11. En Windows 10 22H2 se probó el diagnóstico, que no cambia nada.
+> Estado: beta privada (0.8.0). Probado en Windows 11. En Windows 10 22H2 se probó el diagnóstico, que no cambia nada.
 
 ## Cómo se usa, en 3 pasos
 
@@ -19,9 +19,10 @@ En la misma pantalla, **Qué frena tu PC** te dice qué es lo que más limita tu
 - **Optimizar (modo simple):** un botón que crea un punto de restauración y aplica solo los ajustes seguros que sirven en tu PC. Otro botón, **Deshacer todo**, los revierte.
 - **Qué frena tu PC:** ordena lo que más limita los juegos (placa de video, disco, RAM, procesador, drivers, apagados, programas al iniciar) y avisa cuándo los ajustes de Windows van a ayudar poco.
 - **Diagnóstico:** hardware, XMP, canales de RAM, discos, Hz del monitor, PCIe, BIOS, drivers y apagados inesperados.
-- **Optimizaciones:** 101 ajustes de Windows en tres perfiles (Seguro, Gamer y Avanzado). Cada uno muestra qué cambia, su impacto, su riesgo y si ya está aplicado.
+- **Optimizaciones:** 102 ajustes de Windows en tres perfiles (Seguro, Gamer y Avanzado). Cada uno muestra qué cambia, su impacto, su riesgo y si ya está aplicado.
 - **Juegos:** ajusta Fortnite, Roblox y Minecraft (Java y Bedrock) usando solo sus archivos de configuración oficiales, con copia previa. Para Valorant y CS2 da una guía para ajustarlos a mano, porque tienen antitrampas.
 - **Modo partida:** antes de jugar cierra los programas que elijas y le da prioridad al juego. Al terminar, todo vuelve a como estaba y los programas se vuelven a abrir.
+- **Quitar apps de Windows:** Copilot, promociones y apps que casi nadie usa, cada una con botón para reinstalarla. Edge deja de molestar; desinstalarlo es opcional, en Opciones avanzadas.
 - **Ordenar escritorio:** pone en carpetas por tipo los archivos sueltos del escritorio o de Descargas, y se puede deshacer.
 - **Personalización:** fondo propio de FrameLab para la app y para el escritorio, con botón para volver al fondo anterior.
 - **Medir partida:** FPS, mínimos del 1 % y del 0,1 % y tirones con PresentMon, para comparar antes y después.

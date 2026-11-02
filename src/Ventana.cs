@@ -132,7 +132,7 @@ namespace OptimizadorPC
             lado.Children.Add(marca);
             // Por defecto se ve el modo simple; la elección se recuerda
             var avanzado = new CheckBox { Content = "Opciones avanzadas", Foreground = Suave, FontSize = 13, Margin = new Thickness(22, 10, 16, 18), IsChecked = Util.Preferencia("avanzado") == "1" };
-            avanzado.Click += delegate { Util.GuardarPreferencia("avanzado", avanzado.IsChecked == true ? "1" : "0"); AplicarModo(avanzado.IsChecked == true); };
+            avanzado.Click += async delegate { Util.GuardarPreferencia("avanzado", avanzado.IsChecked == true ? "1" : "0"); AplicarModo(avanzado.IsChecked == true); if (diag != null) await Etapa("Apps", panelApps, RefrescarApps); };
             DockPanel.SetDock(avanzado, Dock.Bottom);
             lado.Children.Add(avanzado);
             lado.Children.Add(new ScrollViewer { Content = menu, VerticalScrollBarVisibility = ScrollBarVisibility.Auto });
@@ -160,7 +160,7 @@ namespace OptimizadorPC
             Pagina("monitor", "", "Monitor en vivo", "Temperatura, uso y frenos del hardware. Dejalo abierto en otra pantalla o revisalo después de jugar.", panelMonitor);
             Pagina("limpieza", "", "Limpieza", "Libera espacio de forma segura. No borra la caché de shaders, porque causaría tirones.", panelLimpieza);
             Pagina("espacio", "\uEDA2", "Espacio en disco", "Muestra qué ocupa más lugar. No borra nada: abrí la carpeta y decidí vos qué sacar.", ConstruirEspacio());
-            Pagina("apps", "", "Apps preinstaladas", "Quita apps que vienen con Windows. Podés reinstalarlas desde Microsoft Store.", panelApps);
+            Pagina("apps", "\uE74D", "Quitar apps de Windows", "Copilot, Edge y las apps que vienen con Windows y casi nadie usa. Cada una se puede reinstalar.", panelApps);
             Pagina("red", "", "Red", "Elegí el DNS y vaciá su caché. Un DNS distinto no da más FPS ni menos ping en el juego; puede acelerar la carga de páginas.", panelRed);
             Pagina("instalar", "", "Instalar", "Instala programas y drivers desde fuentes oficiales.", ConstruirInstalar());
             Pagina("ordenar", "\uE8B7", "Ordenar escritorio", "Pone en carpetas los archivos sueltos del escritorio o de Descargas. No borra nada y se puede deshacer.", ConstruirOrdenar());
@@ -176,7 +176,7 @@ namespace OptimizadorPC
         }
 
         // En modo simple solo quedan las secciones que no requieren saber de Windows
-        static readonly string[] SeccionesSimples = { "simple", "juegos", "espacio", "ordenar", "personalizacion", "acerca" };
+        static readonly string[] SeccionesSimples = { "simple", "juegos", "apps", "espacio", "ordenar", "personalizacion", "acerca" };
 
         void AplicarModo(bool avanzado)
         {
@@ -774,29 +774,180 @@ namespace OptimizadorPC
 
         async Task RefrescarApps()
         {
+            await Task.Run(() => { try { Apps.OlvidarSiVolvio(); } catch (Exception) { } });
             var lista = await Task.Run(() => Apps.Listar());
+            var copilot = catalogo.FirstOrDefault(a => a.id == "copilot");
+            var edge = catalogo.FirstOrDefault(a => a.id == "edge-molesto");
+            bool copilotAplicado = copilot != null && await Task.Run(() => Motor.Aplicado(copilot));
+            bool edgeAplicado = edge != null && await Task.Run(() => Motor.Aplicado(edge));
+            bool edgeRespaldo = edge != null && await Task.Run(() => Motor.TieneRespaldo(edge));
+            bool hayEdge = await Task.Run(() => Apps.EdgeInstalado);
             panelApps.Children.Clear();
-            foreach (var a in lista.OrderByDescending(x => x.Instalada).ThenBy(x => x.Nombre))
+
+            // Copilot: la app, la directiva y el botón de la barra de tareas
+            var co = new StackPanel();
+            co.Children.Add(Texto("Copilot", 15, Tinta, true));
+            var appCopilot = lista.FirstOrDefault(a => a.Paquete == "Microsoft.Copilot" && a.Instalada);
+            co.Children.Add(Texto(appCopilot == null && copilotAplicado ? "Ya está quitado y desactivado." : "Quita la app de Copilot, lo desactiva con una directiva de Windows y oculta su botón. Se puede deshacer desde Optimizaciones > Desactivar Copilot.", 12.5, Suave));
+            if (copilot != null && (appCopilot != null || !copilotAplicado) && !SoloWindows11(copilot))
             {
-                var app = a;
-                var g = new Grid();
-                g.ColumnDefinitions.Add(new ColumnDefinition());
-                g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-                var t = Texto(a.Nombre, 14, a.Instalada ? Tinta : Suave, a.Instalada); t.VerticalAlignment = VerticalAlignment.Center;
-                g.Children.Add(t);
-                var b = Boton(a.Instalada ? "Quitar" : "Reinstalar"); b.Margin = new Thickness(14, 0, 0, 0);
-                b.Click += async delegate
+                var bc = Boton("Quitar Copilot", true); bc.HorizontalAlignment = HorizontalAlignment.Left; bc.Margin = new Thickness(0, 10, 0, 0);
+                bc.Click += async delegate
                 {
-                    if (!app.Instalada) { Abrir(Apps.EnlaceTienda(app)); return; }
-                    if (MessageBox.Show(this, "¿Quitar " + app.Nombre + "? Podés reinstalarla desde Microsoft Store.", Title, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
-                    try { await Task.Run(() => Apps.Quitar(app)); }
+                    if (MessageBox.Show(this, "Se va a quitar Copilot: la app, la directiva y el botón de la barra de tareas. ¿Seguir?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+                    bc.IsEnabled = false; ocupado++;
+                    try
+                    {
+                        await Task.Run(() => { if (appCopilot != null) Apps.Quitar(appCopilot, false); if (!Motor.Aplicado(copilot)) Motor.Aplicar(copilot); });
+                        MessageBox.Show(this, "Listo. El botón desaparece al reiniciar el Explorador o la PC.", Title);
+                    }
+                    catch (Exception ex) { MessageBox.Show(this, ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Warning); }
+                    finally { ocupado--; }
+                    await RefrescarApps();
+                    await RefrescarTrasCambio();
+                };
+                co.Children.Add(bc);
+            }
+            panelApps.Children.Add(Caja(co));
+
+            // Edge: primero lo que no rompe nada; desinstalar, solo en opciones avanzadas y con doble confirmación
+            var ed = new StackPanel();
+            ed.Children.Add(Texto("Microsoft Edge", 15, Tinta, true));
+            ed.Children.Add(Texto("Windows y algunas apps lo usan por dentro, y Windows suele reinstalarlo al actualizarse. Lo recomendable es que deje de molestar y elegir otro navegador como predeterminado.", 12.5, Suave));
+            var fe = new WrapPanel { Margin = new Thickness(0, 10, 0, 0) };
+            if (edge != null && !edgeAplicado)
+            {
+                var bm = Boton("Desactivar lo molesto de Edge", true);
+                bm.Click += async delegate
+                {
+                    bm.IsEnabled = false; ocupado++;
+                    try { await Task.Run(() => Motor.Aplicar(edge)); MessageBox.Show(this, "Listo: Edge ya no arranca solo ni queda abierto en segundo plano. Para que deje de abrirse con los links, elegí otro navegador en la ventana que se abre ahora.\n\nPara sacarlo de la barra de tareas: clic derecho en su ícono > Desanclar.", Title); Abrir("ms-settings:defaultapps"); }
+                    catch (Exception ex) { MessageBox.Show(this, ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Warning); }
+                    finally { ocupado--; }
+                    await RefrescarApps();
+                };
+                fe.Children.Add(bm);
+            }
+            if (edge != null && edgeRespaldo)
+            {
+                var br = Boton("Volver Edge a como estaba");
+                br.Click += async delegate
+                {
+                    try { await Task.Run(() => Motor.Revertir(edge)); }
                     catch (Exception ex) { MessageBox.Show(this, ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Warning); }
                     await RefrescarApps();
                 };
-                Grid.SetColumn(b, 1);
-                g.Children.Add(b);
-                panelApps.Children.Add(Caja(g));
+                fe.Children.Add(br);
             }
+            var bd = Boton("Navegador predeterminado"); bd.Click += delegate { Abrir("ms-settings:defaultapps"); };
+            fe.Children.Add(bd);
+            if (Util.Preferencia("avanzado") == "1")
+            {
+                if (hayEdge)
+                {
+                    var bu = Boton("Desinstalar Edge...");
+                    bu.Click += async delegate
+                    {
+                        if (MessageBox.Show(this, "Desinstalar Edge puede hacer que algunas partes de Windows (ayuda, widgets, algunos links) no abran bien, y Windows Update puede volver a instalarlo. WebView2, que usan otras apps, no se toca.\n\n¿Querés seguir?", Title, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+                        if (MessageBox.Show(this, "Segunda confirmación: ¿desinstalar Microsoft Edge? Lo podés reinstalar desde acá.", Title, MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+                        bu.IsEnabled = false; ocupado++;
+                        try { await Task.Run(() => Apps.DesinstalarEdge()); MessageBox.Show(this, "Edge se desinstaló.", Title); }
+                        catch (Exception ex) { MessageBox.Show(this, ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Warning); }
+                        finally { ocupado--; }
+                        await RefrescarApps();
+                    };
+                    fe.Children.Add(bu);
+                }
+                else
+                {
+                    var bi = Boton("Reinstalar Edge");
+                    bi.Click += async delegate
+                    {
+                        bi.IsEnabled = false; ocupado++;
+                        try { await Task.Run(() => Apps.ReinstalarEdge()); MessageBox.Show(this, "Edge se reinstaló.", Title); }
+                        catch (Exception ex) { MessageBox.Show(this, ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Warning); }
+                        finally { ocupado--; }
+                        await RefrescarApps();
+                    };
+                    fe.Children.Add(bi);
+                }
+            }
+            ed.Children.Add(fe);
+            panelApps.Children.Add(Caja(ed));
+
+            // Apps de Windows, por grupo
+            var nuevas = new CheckBox { Content = "Quitarlas también para las cuentas nuevas que se creen en esta PC", Foreground = Suave, FontSize = 12.5, Margin = new Thickness(0, 6, 0, 8) };
+            var marcas = new List<CheckBox>();
+            Action<string, string, string, bool> grupo = (clave, titulo, nota, marcadas) =>
+            {
+                var items = lista.Where(a => a.Grupo == clave && a.Instalada).ToList();
+                if (!items.Any()) return;
+                panelApps.Children.Add(Subtitulo(titulo));
+                var p = new StackPanel();
+                if (nota != "") { var n = Texto(nota, 12.5, clave == "xbox" ? Pendiente : Suave); n.Margin = new Thickness(0, 0, 0, 6); p.Children.Add(n); }
+                foreach (var a in items)
+                {
+                    var c = new CheckBox { Content = a.Nombre + (a.Aviso != "" ? "  ·  " + a.Aviso : ""), Tag = a, IsChecked = marcadas, Foreground = Tinta, FontSize = 13.5, Margin = new Thickness(0, 4, 0, 0) };
+                    marcas.Add(c); p.Children.Add(c);
+                }
+                panelApps.Children.Add(Caja(p));
+            };
+            grupo("recomendado", "Recomendado quitar", "Apps que casi nadie usa, promociones y accesos directos a servicios web.", true);
+            grupo("opcional", "Opcional", "Algunas personas las usan: marcá solo las que no.", false);
+            grupo("xbox", "Xbox", "Ojo: Game Pass, la app de Xbox, Minecraft Bedrock y otros juegos de Microsoft Store las necesitan. Quitalas solo si no jugás nada de eso.", false);
+            if (marcas.Any())
+            {
+                var bq = Boton("Quitar las marcadas", true); bq.HorizontalAlignment = HorizontalAlignment.Left;
+                bq.Click += async delegate
+                {
+                    var elegidas = marcas.Where(c => c.IsChecked == true).Select(c => (AppQuitable)c.Tag).ToList();
+                    if (!elegidas.Any()) return;
+                    bool paraNuevas = nuevas.IsChecked == true;
+                    if (MessageBox.Show(this, "Se van a quitar:\n\n" + string.Join("\n", elegidas.Select(a => "• " + a.Nombre)) + (paraNuevas ? "\n\nTambién para las cuentas nuevas." : "") + "\n\nCada una se puede reinstalar desde Microsoft Store. ¿Seguir?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+                    bq.IsEnabled = false; ocupado++;
+                    var errores = new List<string>();
+                    try
+                    {
+                        await Task.Run(() =>
+                        {
+                            foreach (var a in elegidas)
+                            {
+                                try { Apps.Quitar(a, paraNuevas); }
+                                catch (Exception ex) { lock (errores) errores.Add(a.Nombre + ": " + ex.Message); }
+                            }
+                        });
+                    }
+                    finally { ocupado--; }
+                    MessageBox.Show(this, (elegidas.Count - errores.Count) + " apps quitadas." + (errores.Any() ? "\n\nNo se pudieron quitar:\n" + string.Join("\n", errores) : ""), Title, MessageBoxButton.OK, errores.Any() ? MessageBoxImage.Warning : MessageBoxImage.Information);
+                    await RefrescarApps();
+                };
+                var fq = new StackPanel { Margin = new Thickness(0, 8, 0, 0) };
+                fq.Children.Add(nuevas); fq.Children.Add(bq);
+                panelApps.Children.Add(fq);
+            }
+
+            var quitadas = lista.Where(a => a.Quitada).ToList();
+            if (quitadas.Any())
+            {
+                panelApps.Children.Add(Subtitulo("Quitadas por FrameLab"));
+                foreach (var a in quitadas)
+                {
+                    var app = a;
+                    var g = new Grid();
+                    g.ColumnDefinitions.Add(new ColumnDefinition());
+                    g.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                    var t = Texto(a.Nombre, 14, Suave); t.VerticalAlignment = VerticalAlignment.Center;
+                    g.Children.Add(t);
+                    var b = Boton("Reinstalar"); b.Margin = new Thickness(14, 0, 0, 0);
+                    b.Click += delegate { Abrir(Apps.EnlaceTienda(app)); };
+                    Grid.SetColumn(b, 1);
+                    g.Children.Add(b);
+                    panelApps.Children.Add(Caja(g));
+                }
+            }
+
+            panelApps.Children.Add(Subtitulo("Mejor dejar"));
+            panelApps.Children.Add(Caja(Texto("No se ofrecen porque las usa Windows o hacen falta para instalar y actualizar: " + string.Join(", ", Apps.MejorDejar) + ". Los componentes del sistema, como WebView2, .NET o las bibliotecas que usan otras apps, nunca aparecen.", 12.5, Suave)));
         }
 
         async Task RefrescarRed()
@@ -1883,6 +2034,25 @@ namespace OptimizadorPC
                 Partida.QuitarPantallaCompleta();
                 using (var k = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(Partida.RutaClaveCompat))
                     ok("pantalla: quita solo lo suyo", k.GetValue(@"C:\Juegos\juego.exe") == null && k.GetValue(@"C:\Juegos\otro.exe") != null);
+
+                // Quitar apps, con una lista de paquetes simulada: no se quita nada real
+                var instaladasPrueba = new HashSet<string>(new[] { "Microsoft.Copilot", "Microsoft.BingNews", "Microsoft.WindowsStore", "Microsoft.VCLibs.140.00", "Microsoft.GamingApp", "SpotifyAB.SpotifyMusic", "Microsoft.Win32WebViewHost" }, StringComparer.OrdinalIgnoreCase);
+                Apps.Instaladas = () => instaladasPrueba;
+                Apps.Simular = true;
+                var apps = Apps.Listar();
+                ok("apps: solo ofrece las de la lista", apps.Count == 4 && !apps.Any(x => x.Paquete.Contains("Store") || x.Paquete.Contains("VCLibs") || x.Paquete.Contains("WebView")));
+                ok("apps: grupos", apps.First(x => x.Paquete == "Microsoft.Copilot").Grupo == "recomendado" && apps.First(x => x.Paquete == "Microsoft.GamingApp").Grupo == "xbox" && apps.First(x => x.Paquete == "SpotifyAB.SpotifyMusic").Grupo == "opcional");
+                bool rechaza = false;
+                try { Apps.Quitar(new AppQuitable { Nombre = "Store", Paquete = "Microsoft.WindowsStore" }, false); } catch (InvalidOperationException) { rechaza = true; }
+                ok("apps: no quita lo que no está en la lista", rechaza);
+                Apps.Quitar(apps.First(x => x.Paquete == "Microsoft.BingNews"), false);
+                instaladasPrueba.Remove("Microsoft.BingNews");
+                var despues = Apps.Listar();
+                ok("apps: recuerda lo quitado para reinstalar", despues.Any(x => x.Paquete == "Microsoft.BingNews" && x.Quitada && !x.Instalada));
+                instaladasPrueba.Add("Microsoft.BingNews");
+                Apps.OlvidarSiVolvio();
+                ok("apps: si se reinstala deja de figurar como quitada", !Apps.Quitadas().Any());
+                Apps.Simular = false;
 
                 // Ordenar: carpeta de prueba con archivos, una carpeta propia, un oculto y un nombre repetido
                 string esc = Path.Combine(carpeta, "escritorio");
