@@ -1,3 +1,13 @@
+# Novedades de FrameLab 0.8.1
+
+## Cambios en 0.8.1 (corrección importante)
+
+- **Se podían perder copias de los valores anteriores.** Con dos ventanas de FrameLab abiertas a la vez, por ejemplo una de `dist` y otra bajada de GitHub, la segunda corría al abrirse un paso de migración de la versión vieja. Si la primera estaba guardando justo en ese momento, la copia buena quedaba pisada por la de una versión anterior. En la PC de prueba se perdieron así las copias de 32 de 38 ajustes. Los ajustes seguían aplicados, pero Revertir y Deshacer todo ya no los veían.
+  - La migración ahora corre solo la primera vez, cuando la carpeta de datos todavía no existe.
+  - Solo puede haber una ventana de FrameLab abierta. Al actualizarse, la versión nueva espera a que se cierre la anterior.
+  - Al abrirse, la app recupera desde la copia anterior (`respaldo.json.bak`) los ajustes que faltan y siguen aplicados.
+- **Modo prueba:** ya no toca la carpeta de datos real.
+
 # Novedades de FrameLab 0.8.0
 
 ## Cambios en 0.8.0

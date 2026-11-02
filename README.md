@@ -2,7 +2,7 @@
 
 Optimizador de Windows para juegos, en español. Es portable: un solo `.exe`, sin instalación.
 
-> Estado: beta privada (0.8.0). Probado en Windows 11. En Windows 10 22H2 se probó el diagnóstico, que no cambia nada.
+> Estado: beta privada (0.8.1). Probado en Windows 11. En Windows 10 22H2 se probó el diagnóstico, que no cambia nada.
 
 ## Cómo se usa, en 3 pasos
 

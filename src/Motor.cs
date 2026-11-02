@@ -64,10 +64,13 @@ namespace OptimizadorPC
         {
             // Hasta la 0.5.0 la app se llamaba Afina PC: se copia su carpeta entera (copias, mediciones, PresentMon)
             // para que Revertir y Deshacer todo sigan funcionando. La carpeta vieja queda como estaba
+            // Solo la primera vez, cuando la carpeta nueva todavía no existe. Antes también copiaba si faltaba respaldo.json,
+            // y si otra ventana de la app justo estaba guardando, pisaba la copia buena con la de la versión vieja
             string nueva = Path.GetDirectoryName(RutaRespaldo);
+            if (Directory.Exists(nueva)) return;
             if (local == null) local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string afina = Path.Combine(local, "AfinaPC");
-            if (!Directory.Exists(nueva) && Directory.Exists(afina))
+            if (Directory.Exists(afina))
             {
                 string tmp = nueva + ".migrando";
                 if (Directory.Exists(tmp)) Directory.Delete(tmp, true);
@@ -76,9 +79,9 @@ namespace OptimizadorPC
                 return;
             }
             string viejo = Path.Combine(local, "OptimizadorPC", "respaldo.json");
-            if (File.Exists(viejo) && !File.Exists(RutaRespaldo))
+            if (File.Exists(viejo))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(RutaRespaldo));
+                Directory.CreateDirectory(nueva);
                 File.Copy(viejo, RutaRespaldo);
             }
         }
@@ -373,6 +376,35 @@ namespace OptimizadorPC
         static void GuardarRespaldo(Dictionary<string, List<Previo>> d)
         {
             Util.EscribirSeguro(RutaRespaldo, new JavaScriptSerializer().Serialize(d), Encoding.UTF8, RutaRespaldoAnterior);
+        }
+
+        // Si la copia anterior tiene ajustes que faltan en la actual y siguen aplicados, se perdió su valor original:
+        // se recuperan para que Revertir y Deshacer todo sigan funcionando. Un ajuste revertido ya no está aplicado,
+        // así que no vuelve a aparecer. Devuelve cuántos recuperó
+        public static int RecuperarPerdidos(IEnumerable<Ajuste> catalogo)
+        {
+            lock (cerrojo)
+            {
+                if (!File.Exists(RutaRespaldoAnterior)) return 0;
+                Dictionary<string, List<Previo>> anterior;
+                try { anterior = Deserializar(RutaRespaldoAnterior); }
+                catch (Exception) { return 0; }
+                var actual = LeerRespaldo();
+                int n = 0;
+                foreach (var a in catalogo)
+                {
+                    List<Previo> p;
+                    if (actual.ContainsKey(a.id) || !anterior.TryGetValue(a.id, out p) || !Aplicado(a)) continue;
+                    actual[a.id] = p;
+                    n++;
+                }
+                if (n > 0)
+                {
+                    GuardarRespaldo(actual);
+                    Util.RegistrarError(new InvalidOperationException("Se recuperaron " + n + " copias de ajustes que faltaban en respaldo.json."));
+                }
+                return n;
+            }
         }
 
         public static bool TieneRespaldo(Ajuste a)

@@ -381,8 +381,12 @@ namespace OptimizadorPC
 
         public async Task Cargar()
         {
-            try { Motor.MigrarRespaldo(); }
-            catch (Exception ex) { Util.RegistrarError(ex); }
+            // En modo prueba no se toca nada de la carpeta de datos real
+            if (!Util.ModoPrueba)
+            {
+                try { Motor.MigrarRespaldo(); } catch (Exception ex) { Util.RegistrarError(ex); }
+                try { await Task.Run(() => Motor.RecuperarPerdidos(catalogo)); } catch (Exception ex) { Util.RegistrarError(ex); }
+            }
             diag = await Task.Run(() => Diagnostico.Recoger());
             panelDiag.Children.Clear();
             foreach (var f in diag.Filas)
@@ -1624,7 +1628,7 @@ namespace OptimizadorPC
                         {
                             await Task.Run(() => Version.Instalar(n));
                             res.Text = "Listo. Se abre la versión nueva.";
-                            Process.Start(new ProcessStartInfo(Assembly.GetExecutingAssembly().Location) { UseShellExecute = true });
+                            Process.Start(new ProcessStartInfo(Assembly.GetExecutingAssembly().Location, "--actualizado") { UseShellExecute = true });
                             Application.Current.Shutdown();
                         }
                         catch (Exception ex) { res.Text = "No se pudo actualizar: " + ex.Message + " Seguís con la versión " + Version.Actual + "."; inst.IsEnabled = true; }
@@ -1738,6 +1742,8 @@ namespace OptimizadorPC
             else File.Move(tmp, ruta);
         }
 
+        public static bool ModoPrueba;
+
         static string RutaPreferencias { get { return Path.Combine(Medicion.Carpeta, "preferencias.txt"); } }
 
         public static string Preferencia(string clave)
@@ -1790,6 +1796,17 @@ namespace OptimizadorPC
             if (args.Length == 3 && args[0] == "--prueba-analisis") return PruebaAnalisis(args[1], args[2]);
             bool prueba = args.Length >= 2 && args[0] == "--prueba";
             if (prueba && args.Length == 3) Diagnostico.BuildSimulado = int.Parse(args[2]);
+            Util.ModoPrueba = prueba;
+            // Dos ventanas abiertas a la vez podían pisarse las copias de los valores anteriores
+            bool primera;
+            var unica = new System.Threading.Mutex(true, "Local\\FrameLab_UnaSolaVentana", out primera);
+            // Al actualizarse, la versión nueva espera a que se cierre la anterior
+            if (!primera && args.Contains("--actualizado")) { try { primera = unica.WaitOne(20000); } catch (System.Threading.AbandonedMutexException) { primera = true; } }
+            if (!primera && !prueba)
+            {
+                MessageBox.Show("FrameLab ya está abierto. Usá la ventana que ya tenés abierta.", "FrameLab", MessageBoxButton.OK, MessageBoxImage.Information);
+                return 0;
+            }
             // Último recurso: un error no previsto se anota y se avisa, sin cerrar la app de golpe
             if (!prueba)
             {
@@ -1837,7 +1854,9 @@ namespace OptimizadorPC
                     else MessageBox.Show(v, "Error al analizar la PC: " + ex.Message, v.Title, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             };
-            return app.Run(v);
+            int salida = app.Run(v);
+            GC.KeepAlive(unica);
+            return salida;
         }
 
         static int PruebaAnalisis(string csv, string salida)
@@ -1951,6 +1970,7 @@ namespace OptimizadorPC
                     { "minecraft", "version:3953\nrenderDistance:24\nsimulationDistance:12\ngraphicsMode:1\nparticles:0\nrenderClouds:\"true\"\nenableVsync:true\nmaxFps:260\nlang:es_ar\n" },
                     { "bedrock", "gfx_viewdistance:512\ngfx_fancygraphics:1\ngfx_vsync:1\nmp_username:Steve\n" },
                     { "fortnite", "[ScalabilityGroups]\r\nsg.ShadowQuality=3\r\n[/Script/FortniteGame.FortGameUserSettings]\r\nFrameRateLimit=0.000000\r\n" } };
+                Juegos.Simular = true;
                 foreach (var x in archivos)
                 {
                     string ruta = Path.Combine(tmpJuegos, x.Key + ".cfg");
@@ -1968,6 +1988,7 @@ namespace OptimizadorPC
                     if (x.Key == "fortnite") ok("fortnite: conserva CRLF", nuevo.Contains("sg.ShadowQuality=0\r\n"));
                 }
                 Juegos.RutasPrueba.Clear();
+                Juegos.Simular = false;
                 Directory.Delete(tmpJuegos, true);
 
                 ok("gama GT 710", Frenos.Gama("NVIDIA GeForce GT 710") == 1);
@@ -2034,6 +2055,30 @@ namespace OptimizadorPC
                 Partida.QuitarPantallaCompleta();
                 using (var k = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(Partida.RutaClaveCompat))
                     ok("pantalla: quita solo lo suyo", k.GetValue(@"C:\Juegos\juego.exe") == null && k.GetValue(@"C:\Juegos\otro.exe") != null);
+
+                // Copia perdida: lo que falta en respaldo.json y sigue aplicado se recupera de la copia anterior
+                var r1 = new Ajuste { id = "prueba-r1", acciones = new List<Accion> { new Accion { tipo = "registro", ruta = "HKCU\\" + clave, valor = "R1", tipoValor = "DWord", dato = "1" } } };
+                var r2 = new Ajuste { id = "prueba-r2", acciones = new List<Accion> { new Accion { tipo = "registro", ruta = "HKCU\\" + clave, valor = "R2", tipoValor = "DWord", dato = "1" } } };
+                Motor.Aplicar(r1);
+                string soloR1 = File.ReadAllText(Motor.RutaRespaldo);
+                Motor.Aplicar(r2);
+                File.Copy(Motor.RutaRespaldo, Motor.RutaRespaldo + ".bak", true);
+                File.WriteAllText(Motor.RutaRespaldo, soloR1);
+                ok("recupera copias perdidas", Motor.RecuperarPerdidos(new[] { r1, r2 }) == 1 && Motor.TieneRespaldo(r2));
+                Motor.Revertir(r2);
+                ok("no recupera lo revertido", Motor.RecuperarPerdidos(new[] { r1, r2 }) == 0 && !Motor.TieneRespaldo(r2));
+                Motor.Revertir(r1);
+                Motor.AvisoRespaldo = null;
+
+                // La migración vieja no pisa una copia existente aunque falte respaldo.json un instante
+                string local2 = Path.Combine(carpeta, "local2");
+                Directory.CreateDirectory(Path.Combine(local2, "OptimizadorPC")); Directory.CreateDirectory(Path.Combine(local2, "FrameLab"));
+                File.WriteAllText(Path.Combine(local2, @"OptimizadorPC\respaldo.json"), "{\"viejo\":[]}");
+                string rutaGuardada = Motor.RutaRespaldo;
+                Motor.RutaRespaldo = Path.Combine(local2, @"FrameLab\respaldo.json");
+                Motor.MigrarRespaldo(local2);
+                ok("migración vieja no copia si la carpeta ya existe", !File.Exists(Motor.RutaRespaldo));
+                Motor.RutaRespaldo = rutaGuardada;
 
                 // Quitar apps, con una lista de paquetes simulada: no se quita nada real
                 var instaladasPrueba = new HashSet<string>(new[] { "Microsoft.Copilot", "Microsoft.BingNews", "Microsoft.WindowsStore", "Microsoft.VCLibs.140.00", "Microsoft.GamingApp", "SpotifyAB.SpotifyMusic", "Microsoft.Win32WebViewHost" }, StringComparer.OrdinalIgnoreCase);

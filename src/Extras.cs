@@ -114,8 +114,12 @@ namespace OptimizadorPC
         static int ChunksMinecraft(string nivel) { return nivel == "Bajo" ? 8 : nivel == "Medio" ? 12 : 16; }
         static string DistanciaMinecraft(string nivel) { return ChunksMinecraft(nivel) + " chunks"; }
 
+        // Solo para pruebas con archivos temporales: no mira si el juego real está abierto
+        public static bool Simular;
+
         public static bool Abierto(string id)
         {
+            if (Simular) return false;
             Func<string, bool> hay = n => Process.GetProcessesByName(n).Any();
             if (id == "fortnite") return new[] { "FortniteClient-Win64-Shipping", "FortniteClient-Win64-Shipping_EAC", "FortniteClient-Win64-Shipping_EAC_EOS", "FortniteClient-Win64-Shipping_BE", "FortniteLauncher" }.Any(hay);
             if (id == "roblox") return hay("RobloxPlayerBeta");
@@ -486,7 +490,7 @@ namespace OptimizadorPC
 
     public static class Version
     {
-        public const string Actual = "0.8.0";
+        public const string Actual = "0.8.1";
         static string RutaConfig { get { return Path.Combine(Medicion.Carpeta, "actualizaciones.txt"); } }
         public const string Repositorio = "Pompecca/FrameLab";
         public const string PaginaDescargas = "https://github.com/" + Repositorio + "/releases";
