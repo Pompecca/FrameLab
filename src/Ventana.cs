@@ -211,6 +211,12 @@ namespace OptimizadorPC
             s.Children.Add(Subtitulo("Qué frena tu PC"));
             panelFrenos.Children.Add(Texto("Analizando la PC...", 13, Suave));
             s.Children.Add(panelFrenos);
+            // Discreto, al final: la app es gratis
+            var cafe = new TextBlock { Margin = new Thickness(0, 18, 0, 0), FontSize = 12.5, Foreground = Suave };
+            var link = new System.Windows.Documents.Hyperlink(new System.Windows.Documents.Run("☕ Invitame un cafecito")) { Foreground = Acento };
+            link.Click += delegate { Abrir(Version.Cafecito); };
+            cafe.Inlines.Add("¿Te sirvió FrameLab? "); cafe.Inlines.Add(link);
+            s.Children.Add(cafe);
             return s;
         }
 
@@ -1639,6 +1645,10 @@ namespace OptimizadorPC
                 finally { b.IsEnabled = true; }
             };
             s.Children.Add(b); s.Children.Add(res); s.Children.Add(acciones);
+            var apoyo = Texto("FrameLab es gratis y lo hace una sola persona. Si te sirvió, podés invitarme un cafecito.", 13, Suave); apoyo.Margin = new Thickness(0, 14, 0, 8);
+            var cafe = Boton("☕ Invitame un cafecito", true); cafe.HorizontalAlignment = HorizontalAlignment.Left;
+            cafe.Click += delegate { Abrir(Version.Cafecito); };
+            s.Children.Add(apoyo); s.Children.Add(cafe);
             var todo = new StackPanel();
             todo.Children.Add(Caja(s));
             todo.Children.Add(Subtitulo("Por qué no está"));

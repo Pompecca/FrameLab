@@ -1,3 +1,9 @@
+# Novedades de FrameLab 1.0.1
+
+## Cambios en 1.0.1
+
+- **Cafecito:** botón "Invitame un cafecito" en Acerca de, un link discreto al final de Optimizar, y el link en el README y en la página web. La app sigue siendo gratis y completa.
+
 # Novedades de FrameLab 1.0
 
 ## Versión 1.0

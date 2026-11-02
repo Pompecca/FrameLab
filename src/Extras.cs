@@ -490,10 +490,11 @@ namespace OptimizadorPC
 
     public static class Version
     {
-        public const string Actual = "1.0.0";
+        public const string Actual = "1.0.1";
         static string RutaConfig { get { return Path.Combine(Medicion.Carpeta, "actualizaciones.txt"); } }
         public const string Repositorio = "Pompecca/FrameLab";
         public const string PaginaDescargas = "https://github.com/" + Repositorio + "/releases";
+        public const string Cafecito = "https://cafecito.app/framelabapp";
 
         public class Nueva { public System.Version Numero; public string Notas, UrlExe; public long Tamaño; public string Sha256; public bool Privado; }
 
