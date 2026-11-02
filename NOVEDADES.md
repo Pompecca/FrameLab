@@ -1,3 +1,21 @@
+# Novedades de FrameLab 0.6.0
+
+## Cambios en 0.6.0
+
+- **Modo partida (en Juegos):** antes de jugar cierra los programas que marques, como navegadores, Discord o launchers, y al terminar los vuelve a abrir. Mientras dura:
+  - le da prioridad alta al juego, nunca tiempo real;
+  - baja la prioridad de los navegadores y launchers que queden abiertos;
+  - pausa la indexación de búsqueda de Windows;
+  - activa el plan de alto rendimiento.
+
+  Todo vuelve a como estaba al terminar o al cerrar la app. Si la app se cierra de golpe, lo deshace la próxima vez que se abre. No toca procesos de Windows, de seguridad ni antitrampas, ni la memoria o los archivos de los juegos. Reconoce Fortnite, Roblox, Minecraft, CS2, Valorant, GTA V, Rocket League y Apex, y se pueden agregar otros juegos por el nombre del .exe.
+- **Placa de video de alto rendimiento por juego:** opción para notebooks con dos placas. Se puede quitar.
+- **Personalización (sección nueva):**
+  - Fondo propio de FrameLab dentro de la app, con intensidad regulable. También podés elegir tu propia imagen o dejarla sin fondo.
+  - Botón para poner un fondo de escritorio FrameLab, dibujado por la app a la resolución de tu monitor (1080p, 1440p o 4K), y otro para volver al fondo anterior.
+
+Probado sin administrador: 58 pruebas OK. El modo partida se probó con un programa de prueba, sin tocar el plan de energía, la búsqueda ni otros programas. El fondo de escritorio se probó sobre una clave de prueba, sin cambiar el fondo real.
+
 # Novedades de FrameLab 0.5.1
 
 ## Cambios en 0.5.1

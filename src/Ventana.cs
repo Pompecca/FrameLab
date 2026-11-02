@@ -152,7 +152,7 @@ namespace OptimizadorPC
             Pagina("diagnostico", "", "Diagnóstico", "Qué tiene esta PC y qué conviene revisar. Acá no se cambia nada.", diagCuerpo);
             Pagina("optimizaciones", "", "Optimizaciones", "Elegí qué aplicar. Antes se crea un punto de restauración y se guarda el valor anterior de cada ajuste.", ConstruirAjustes());
             Pagina("inicio", "", "Programas al iniciar", "Elegí qué arranca con Windows. No se desinstala nada.", panelInicio);
-            Pagina("juegos", "", "Juegos", "Ajustes recomendados según tu PC y un límite de FPS orientativo.", panelJuegos);
+            Pagina("juegos", "", "Juegos", "Modo partida y ajustes recomendados para cada juego según tu PC.", CuerpoJuegos());
             Pagina("medir", "", "Medir partida", "Mide FPS y tirones durante un juego, explica qué los causa y compara antes y después.", panelMedir);
             Pagina("monitor", "", "Monitor en vivo", "Temperatura, uso y frenos del hardware. Dejalo abierto en otra pantalla o revisalo después de jugar.", panelMonitor);
             Pagina("limpieza", "", "Limpieza", "Libera espacio de forma segura. No borra la caché de shaders, porque causaría tirones.", panelLimpieza);
@@ -160,16 +160,19 @@ namespace OptimizadorPC
             Pagina("apps", "", "Apps preinstaladas", "Quita apps que vienen con Windows. Podés reinstalarlas desde Microsoft Store.", panelApps);
             Pagina("red", "", "Red", "Elegí el DNS y vaciá su caché. Un DNS distinto no da más FPS ni menos ping en el juego; puede acelerar la carga de páginas.", panelRed);
             Pagina("instalar", "", "Instalar", "Instala programas y drivers desde fuentes oficiales.", ConstruirInstalar());
+            Pagina("personalizacion", "\uE771", "Personalización", "El fondo de la app y un fondo de escritorio propio de FrameLab.", ConstruirPersonalizacion());
             Pagina("acerca", "", "Acerca de", "Versión y actualizaciones.", ConstruirAcerca());
             ((RadioButton)menu.Children[0]).IsChecked = true;
             AplicarModo(avanzado.IsChecked == true);
+            contenido.Children.Insert(0, capaFondo);
+            AplicarFondo();
             ConstruirMedir();
             ConstruirMonitorBase();
             Closing += AlCerrar;
         }
 
         // En modo simple solo quedan las secciones que no requieren saber de Windows
-        static readonly string[] SeccionesSimples = { "simple", "juegos", "espacio", "acerca" };
+        static readonly string[] SeccionesSimples = { "simple", "juegos", "espacio", "personalizacion", "acerca" };
 
         void AplicarModo(bool avanzado)
         {
@@ -345,6 +348,7 @@ namespace OptimizadorPC
                 medicion = null;
             }
             if (reloj != null) reloj.Stop();
+            if (Partida.Activo) { try { Partida.Terminar(); } catch (Exception ex) { Util.RegistrarError(ex); } }
         }
 
         // Una sección que falla no debe dejar a las demás sin cargar
@@ -406,6 +410,7 @@ namespace OptimizadorPC
             reloj.Tick += async delegate { await TickMonitor(); };
             reloj.Start();
             MostrarAvisoRespaldo();
+            RestaurarPartidaPendiente();
         }
 
         void MostrarAvisoRespaldo()
@@ -1116,6 +1121,225 @@ namespace OptimizadorPC
             catch (System.ComponentModel.Win32Exception) { return -2; }
         }
 
+        // ---------- Modo partida ----------
+        readonly StackPanel listaPartida = new StackPanel();
+        readonly TextBlock estadoPartida = Texto("", 13, Suave);
+        Button botonPartida, botonFinPartida;
+        CheckBox gpuAlta;
+        DispatcherTimer relojPartida;
+
+        UIElement CuerpoJuegos()
+        {
+            var s = new StackPanel();
+            var c = new StackPanel();
+            c.Children.Add(Texto("Modo partida", 16, Tinta, true));
+            var d = Texto("Activalo antes de abrir el juego. Cierra los programas que marques y los vuelve a abrir al terminar. Mientras dura, le da prioridad alta al juego, baja la de navegadores y launchers que queden abiertos, pausa la indexación de búsqueda de Windows y usa el plan de alto rendimiento. Todo vuelve a como estaba al terminar.", 12.5, Suave);
+            d.Margin = new Thickness(0, 4, 0, 10);
+            c.Children.Add(d);
+            c.Children.Add(listaPartida);
+            var fila = new WrapPanel { Margin = new Thickness(0, 8, 0, 0) };
+            var act = Boton("Actualizar lista"); act.Click += async delegate { await ListarPartida(); };
+            botonPartida = Boton("Empezar modo partida", true); botonPartida.Click += async delegate { await EmpezarPartida(); };
+            botonFinPartida = Boton("Terminar y volver a abrir"); botonFinPartida.IsEnabled = false; botonFinPartida.Click += async delegate { await TerminarPartida(); };
+            fila.Children.Add(botonPartida); fila.Children.Add(botonFinPartida); fila.Children.Add(act);
+            c.Children.Add(fila);
+            var extra = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 6, 0, 0) };
+            extra.Children.Add(new TextBlock { Text = "Otros juegos (nombre del .exe, separados por coma): ", Foreground = Suave, FontSize = 12.5, VerticalAlignment = VerticalAlignment.Center });
+            var juegosExtra = new TextBox { Width = 260, Text = string.Join(", ", Partida.JuegosExtra()), Background = Tarjeta, Foreground = Tinta, BorderBrush = Linea, Padding = new Thickness(4, 2, 4, 2) };
+            juegosExtra.LostFocus += delegate { Partida.GuardarJuegosExtra(juegosExtra.Text); juegosExtra.Text = string.Join(", ", Partida.JuegosExtra()); };
+            extra.Children.Add(juegosExtra);
+            c.Children.Add(extra);
+            gpuAlta = new CheckBox { Content = "Usar la placa de video de alto rendimiento en los juegos (para notebooks con dos placas)", Foreground = Suave, FontSize = 12.5, Margin = new Thickness(0, 10, 0, 0), IsChecked = Util.Preferencia("gpuAlta") == "1", Visibility = Visibility.Collapsed };
+            gpuAlta.Click += delegate
+            {
+                Util.GuardarPreferencia("gpuAlta", gpuAlta.IsChecked == true ? "1" : "0");
+                if (gpuAlta.IsChecked != true) { try { Partida.QuitarGpuAlta(); } catch (Exception ex) { MessageBox.Show(this, ex.Message, Title); } }
+            };
+            c.Children.Add(gpuAlta);
+            estadoPartida.Margin = new Thickness(0, 8, 0, 0);
+            c.Children.Add(estadoPartida);
+            var nota = Texto("Para saber cuánto te sirve, medí una partida sin el modo partida y otra con el modo partida activo, desde Medir partida. En PCs con poca RAM o un procesador de 4 hilos suele notarse en menos tirones; en PCs potentes la diferencia es chica.", 12, Suave);
+            nota.Margin = new Thickness(0, 8, 0, 0);
+            c.Children.Add(nota);
+            s.Children.Add(Caja(c));
+            s.Children.Add(Subtitulo("Ajustes de cada juego"));
+            s.Children.Add(panelJuegos);
+            Loaded += async delegate { await ListarPartida(); };
+            return s;
+        }
+
+        async Task ListarPartida()
+        {
+            if (diag != null && diag.Gpus.Count >= 2) gpuAlta.Visibility = Visibility.Visible;
+            if (Partida.Activo) return;
+            var l = await Task.Run(() => Partida.Listar());
+            var elegidos = Util.Preferencia("partida");
+            var marcados = elegidos == null ? new[] { "chrome", "msedge", "firefox", "opera", "brave" } : elegidos.Split(',');
+            listaPartida.Children.Clear();
+            if (!l.Any()) listaPartida.Children.Add(Texto("No hay programas abiertos para cerrar. Igual podés activarlo para el resto de las mejoras.", 12.5, Suave));
+            foreach (var a in l)
+                listaPartida.Children.Add(new CheckBox { Content = a.Nombre + "  (" + (a.Bytes / 1e9).ToString("0.0") + " GB de RAM)", Tag = a.Proceso, Foreground = Tinta, FontSize = 13.5, Margin = new Thickness(0, 0, 0, 6), IsChecked = marcados.Contains(a.Proceso) });
+            listaPartida.Children.Add(Texto("No cierres el launcher del juego que vas a jugar (por ejemplo Steam o Epic), y guardá lo que tengas abierto en el navegador.", 12, Suave));
+        }
+
+        async Task EmpezarPartida()
+        {
+            var cerrar = listaPartida.Children.OfType<CheckBox>().Where(c => c.IsChecked == true).Select(c => (string)c.Tag).ToList();
+            Util.GuardarPreferencia("partida", string.Join(",", cerrar));
+            if (cerrar.Any() && MessageBox.Show(this, "Se van a cerrar: " + string.Join(", ", listaPartida.Children.OfType<CheckBox>().Where(c => c.IsChecked == true).Select(c => ((string)c.Content).Split('(')[0].Trim())) + ".\n\nGuardá lo que tengas abierto. Al terminar el modo partida se vuelven a abrir. ¿Seguir?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+            botonPartida.IsEnabled = false;
+            estadoPartida.Text = "Preparando...";
+            try
+            {
+                long liberado = await Task.Run(() => Partida.Empezar(cerrar));
+                estadoPartida.Text = "Modo partida activo." + (liberado > 0 ? " Se liberaron unos " + (liberado / 1e9).ToString("0.0") + " GB de RAM." : "") + " Abrí el juego.";
+                estadoPartida.Foreground = Ok;
+                botonFinPartida.IsEnabled = true;
+                listaPartida.IsEnabled = false;
+                relojPartida = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+                relojPartida.Tick += async delegate
+                {
+                    bool gpu = gpuAlta.IsChecked == true && gpuAlta.Visibility == Visibility.Visible;
+                    try
+                    {
+                        var j = await Task.Run(() => Partida.Vigilar(gpu));
+                        if (j.Any()) estadoPartida.Text = "Modo partida activo. Juego detectado: " + string.Join(", ", j) + ", con prioridad alta.";
+                    }
+                    catch (Exception ex) { Util.RegistrarError(ex); }
+                };
+                relojPartida.Start();
+            }
+            catch (Exception ex)
+            {
+                estadoPartida.Text = "No se pudo activar: " + ex.Message;
+                estadoPartida.Foreground = Pendiente;
+                botonPartida.IsEnabled = true;
+            }
+        }
+
+        async Task TerminarPartida()
+        {
+            botonFinPartida.IsEnabled = false;
+            if (relojPartida != null) relojPartida.Stop();
+            try
+            {
+                var abiertos = await Task.Run(() => Partida.Terminar());
+                estadoPartida.Text = "Modo partida terminado. Todo volvió a como estaba." + (abiertos.Any() ? " Se volvieron a abrir: " + string.Join(", ", abiertos) + "." : "");
+                estadoPartida.Foreground = Suave;
+            }
+            catch (Exception ex) { estadoPartida.Text = "No se pudo terminar del todo: " + ex.Message; estadoPartida.Foreground = Pendiente; }
+            listaPartida.IsEnabled = true;
+            botonPartida.IsEnabled = true;
+            await ListarPartida();
+        }
+
+        // Si la app se cerró de golpe durante una partida, al abrirla se deshace lo que quedó cambiado
+        void RestaurarPartidaPendiente()
+        {
+            if (Partida.Leer() == null) return;
+            var pendientes = Partida.PendientesDeReabrir();
+            bool reabrir = pendientes.Any() && MessageBox.Show(this, "El modo partida no terminó bien la última vez. Ya se restauró el plan de energía y la búsqueda de Windows.\n\n¿Volver a abrir los programas que se habían cerrado (" + string.Join(", ", pendientes.Select(Path.GetFileNameWithoutExtension)) + ")?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+            try { Partida.Terminar(reabrir); }
+            catch (Exception ex) { Util.RegistrarError(ex); }
+        }
+
+        // ---------- Personalización ----------
+        readonly Border capaFondo = new Border { IsHitTestVisible = false };
+
+        void AplicarFondo()
+        {
+            string tipo = Util.Preferencia("fondoApp") ?? "framelab";
+            double op;
+            if (!double.TryParse(Util.Preferencia("fondoIntensidad"), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out op)) op = 0.35;
+            capaFondo.Background = null;
+            try
+            {
+                if (tipo == "framelab")
+                {
+                    var dv = new DrawingVisual();
+                    using (var dc = dv.RenderOpen()) FondoFrameLab.Dibujar(dc, 1920, 1080, null, false);
+                    var bmp = new RenderTargetBitmap(1920, 1080, 96, 96, PixelFormats.Pbgra32);
+                    bmp.Render(dv); bmp.Freeze();
+                    capaFondo.Background = new ImageBrush(bmp) { Stretch = Stretch.UniformToFill };
+                }
+                else if (tipo == "imagen")
+                {
+                    string ruta = Util.Preferencia("fondoImagen");
+                    if (ruta == null || !File.Exists(ruta)) return;
+                    var i = new BitmapImage();
+                    i.BeginInit(); i.UriSource = new Uri(ruta); i.CacheOption = BitmapCacheOption.OnLoad; i.DecodePixelWidth = 1920; i.EndInit(); i.Freeze();
+                    capaFondo.Background = new ImageBrush(i) { Stretch = Stretch.UniformToFill };
+                }
+            }
+            catch (Exception ex) { Util.RegistrarError(ex); }
+            capaFondo.Opacity = Math.Max(0.05, Math.Min(1, op));
+        }
+
+        UIElement ConstruirPersonalizacion()
+        {
+            var s = new StackPanel();
+
+            var app = new StackPanel();
+            app.Children.Add(Texto("Fondo de la app", 15, Tinta, true));
+            var fa = new WrapPanel { Margin = new Thickness(0, 10, 0, 0) };
+            Action<string, string> opcion = (texto, tipo) =>
+            {
+                var b = Boton(texto);
+                b.Click += delegate { Util.GuardarPreferencia("fondoApp", tipo); AplicarFondo(); };
+                fa.Children.Add(b);
+            };
+            opcion("Fondo FrameLab", "framelab");
+            opcion("Sin fondo", "ninguno");
+            var propia = Boton("Elegir una imagen...");
+            propia.Click += delegate
+            {
+                var dlg = new Microsoft.Win32.OpenFileDialog { Filter = "Imágenes|*.jpg;*.jpeg;*.png;*.bmp" };
+                if (dlg.ShowDialog(this) != true) return;
+                try
+                {
+                    // Se guarda una copia: si movés o borrás la original, el fondo sigue
+                    string destino = Path.Combine(Medicion.Carpeta, "fondo_app" + Path.GetExtension(dlg.FileName).ToLowerInvariant());
+                    Directory.CreateDirectory(Medicion.Carpeta);
+                    File.Copy(dlg.FileName, destino, true);
+                    Util.GuardarPreferencia("fondoImagen", destino);
+                    Util.GuardarPreferencia("fondoApp", "imagen");
+                    AplicarFondo();
+                }
+                catch (Exception ex) { MessageBox.Show(this, "No se pudo usar esa imagen: " + ex.Message, Title); }
+            };
+            fa.Children.Add(propia);
+            app.Children.Add(fa);
+            var intensidad = new Slider { Minimum = 0.1, Maximum = 0.8, Width = 260, HorizontalAlignment = HorizontalAlignment.Left, Value = capaFondo.Opacity };
+            intensidad.ValueChanged += delegate { capaFondo.Opacity = intensidad.Value; Util.GuardarPreferencia("fondoIntensidad", intensidad.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)); };
+            app.Children.Add(Texto("Intensidad", 12.5, Suave));
+            app.Children.Add(intensidad);
+            s.Children.Add(Caja(app));
+
+            var esc = new StackPanel();
+            esc.Children.Add(Texto("Fondo de escritorio FrameLab", 15, Tinta, true));
+            esc.Children.Add(Texto("Pone en Windows un fondo propio de FrameLab, del tamaño de tu monitor. Antes guarda el que tenés para poder volver.", 12.5, Suave));
+            var fe = new WrapPanel { Margin = new Thickness(0, 10, 0, 0) };
+            var poner = Boton("Poner fondo FrameLab", true);
+            var volver = Boton("Volver al fondo anterior");
+            volver.IsEnabled = FondoFrameLab.HayCopia;
+            var res = Texto("", 12.5, Suave);
+            poner.Click += delegate
+            {
+                try { FondoFrameLab.PonerEscritorio(CargarLogo()); res.Text = "Listo. Mirá el escritorio."; volver.IsEnabled = true; }
+                catch (Exception ex) { res.Text = ex.Message; }
+            };
+            volver.Click += delegate
+            {
+                try { FondoFrameLab.VolverAnterior(); res.Text = "Volvió tu fondo anterior."; volver.IsEnabled = false; }
+                catch (Exception ex) { res.Text = ex.Message; }
+            };
+            fe.Children.Add(poner); fe.Children.Add(volver);
+            esc.Children.Add(fe);
+            esc.Children.Add(res);
+            s.Children.Add(Caja(esc));
+            return s;
+        }
+
         UIElement ConstruirAcerca()
         {
             var s = new StackPanel();
@@ -1485,6 +1709,52 @@ namespace OptimizadorPC
                 Motor.MigrarRespaldo(local);
                 ok("migra la carpeta de Afina PC", File.Exists(Motor.RutaRespaldo) && File.Exists(Path.Combine(local, @"FrameLab\copias_juegos\a.ini")) && File.Exists(Path.Combine(vieja, "respaldo.json")));
                 Motor.RutaRespaldo = rutaReal;
+
+                // Modo partida con un proceso de prueba: cierra, sube prioridad y deshace. No toca plan, búsqueda ni otros programas
+                Partida.Simular = true;
+                string exePrueba = Path.Combine(carpeta, "framelabprueba.exe");
+                File.Copy(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "PING.EXE"), exePrueba, true);
+                Func<Process> lanzar = () => Process.Start(new ProcessStartInfo(exePrueba, "-n 120 127.0.0.1") { UseShellExecute = false, CreateNoWindow = true });
+                var pj = lanzar();
+                string extraAntes = Util.Preferencia("juegosExtra");
+                Partida.GuardarJuegosExtra("framelabprueba.exe");
+                Partida.Empezar(new string[0]);
+                Partida.Vigilar(false);
+                pj.Refresh();
+                ok("partida: sube prioridad del juego", pj.PriorityClass == ProcessPriorityClass.High);
+                ok("partida: guarda estado en disco", File.Exists(Partida.RutaEstado));
+                Partida.Terminar();
+                pj.Refresh();
+                ok("partida: devuelve la prioridad", pj.PriorityClass == ProcessPriorityClass.Normal && !File.Exists(Partida.RutaEstado));
+                Partida.Empezar(new[] { "framelabprueba" });
+                ok("partida: cierra el programa elegido", pj.WaitForExit(8000));
+                ok("partida: recuerda para reabrir", Partida.PendientesDeReabrir().Any(r => r.EndsWith("framelabprueba.exe", StringComparison.OrdinalIgnoreCase)));
+                Partida.Terminar();
+                Util.GuardarPreferencia("juegosExtra", extraAntes ?? "");
+                Partida.Simular = false;
+                File.Delete(exePrueba);
+
+                // Preferencia de placa de video, sobre una clave de prueba
+                Partida.RutaClaveGpu = clave + "\\Gpu";
+                Partida.GpuAltaPrueba(@"C:\Juegos\juego.exe");
+                using (var k = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(Partida.RutaClaveGpu))
+                    ok("gpu: agrega preferencia", (string)k.GetValue(@"C:\Juegos\juego.exe") == "GpuPreference=2;");
+                Partida.QuitarGpuAlta();
+                using (var k = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(Partida.RutaClaveGpu))
+                    ok("gpu: la quita", k.GetValue(@"C:\Juegos\juego.exe") == null);
+
+                // Fondo: se dibuja y se guarda/restaura el anterior sobre una clave de prueba, sin cambiar el fondo real
+                string png = Path.Combine(carpeta, "fondo.png");
+                FondoFrameLab.GuardarPng(png, 1920, 1080, null);
+                var dec = new System.Windows.Media.Imaging.PngBitmapDecoder(new Uri(png), System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.OnLoad);
+                ok("fondo: imagen 1920x1080", dec.Frames[0].PixelWidth == 1920 && dec.Frames[0].PixelHeight == 1080);
+                FondoFrameLab.ClaveEscritorioPrueba = clave + "\\Escritorio";
+                using (var k = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(FondoFrameLab.ClaveEscritorioPrueba)) { k.SetValue("WallPaper", @"C:\fotos\mi fondo.jpg"); k.SetValue("WallpaperStyle", "6"); k.SetValue("TileWallpaper", "0"); }
+                FondoFrameLab.GuardarAnterior();
+                var copia = FondoFrameLab.LeerCopia();
+                ok("fondo: guarda el anterior", copia[0] == @"C:\fotos\mi fondo.jpg" && copia[1] == "6");
+                File.Delete(FondoFrameLab.RutaCopia);
+                FondoFrameLab.ClaveEscritorioPrueba = null;
 
                 // La limpieza no entra en enlaces
                 string raiz = Path.Combine(carpeta, "limpieza"), fuera = Path.Combine(carpeta, "fuera");

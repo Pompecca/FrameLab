@@ -2,7 +2,7 @@
 
 Optimizador de Windows para juegos, en español. Es portable: un solo `.exe`, sin instalación.
 
-> Estado: beta privada (0.5.1). Probado en Windows 11. En Windows 10 22H2 se probó el diagnóstico, que no cambia nada.
+> Estado: beta privada (0.6.0). Probado en Windows 11. En Windows 10 22H2 se probó el diagnóstico, que no cambia nada.
 
 ## Cómo se usa, en 3 pasos
 
@@ -21,6 +21,8 @@ En la misma pantalla, **Qué frena tu PC** te dice qué es lo que más limita tu
 - **Diagnóstico:** hardware, XMP, canales de RAM, discos, Hz del monitor, PCIe, BIOS, drivers y apagados inesperados.
 - **Optimizaciones:** 98 ajustes de Windows en tres perfiles (Seguro, Gamer y Avanzado). Cada uno muestra qué cambia, su impacto, su riesgo y si ya está aplicado.
 - **Juegos:** ajusta Fortnite, Roblox y Minecraft (Java y Bedrock) usando solo sus archivos de configuración oficiales, con copia previa. Para Valorant y CS2 da una guía para ajustarlos a mano, porque tienen antitrampas.
+- **Modo partida:** antes de jugar cierra los programas que elijas y le da prioridad al juego. Al terminar, todo vuelve a como estaba y los programas se vuelven a abrir.
+- **Personalización:** fondo propio de FrameLab para la app y para el escritorio, con botón para volver al fondo anterior.
 - **Medir partida:** FPS, mínimos del 1 % y del 0,1 % y tirones con PresentMon, para comparar antes y después.
 - **Espacio en disco, Limpieza, Programas al iniciar, Red e Instalar:** liberar espacio sin riesgo, elegir qué arranca con Windows, elegir el DNS e instalar programas y drivers de fuentes oficiales.
 
@@ -63,6 +65,7 @@ Usa el compilador de .NET Framework que ya trae Windows. No hace falta instalar 
 - `src\Salud.cs`: revisión de hardware y límite de FPS.
 - `src\Medicion.cs`: medición con PresentMon y análisis.
 - `src\Extras.cs`: juegos (Fortnite, Roblox y Minecraft), limpieza, apps y actualizaciones.
+- `src\Partida.cs`: modo partida. `src\Fondo.cs`: fondo de FrameLab.
 - `src\Frenos.cs`: "Qué frena tu PC", la tabla de gamas de placas de video y el asistente de espacio.
 - `src\Ventana.cs`: interfaz. `src\Tema.xaml`: colores y estilos.
 - `crear_logo.ps1`: genera el logo.

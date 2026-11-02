@@ -397,7 +397,7 @@ namespace OptimizadorPC
 
     public static class Version
     {
-        public const string Actual = "0.5.1";
+        public const string Actual = "0.6.0";
         static string RutaConfig { get { return Path.Combine(Medicion.Carpeta, "actualizaciones.txt"); } }
 
         // La URL se configura en un archivo: debe devolver {"version":"x.y.z","descarga":"https://..."}
