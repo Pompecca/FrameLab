@@ -16,6 +16,9 @@ fuentes/
 screenshots/
 capturas/
 web/*.png
+!web/capturas/
+!web/capturas/*.png
+!web/logo.png
 *.csv
 respaldo*.json
 respaldo*.json.bak

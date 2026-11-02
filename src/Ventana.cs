@@ -160,7 +160,7 @@ namespace OptimizadorPC
             Pagina("monitor", "", "Monitor en vivo", "Temperatura, uso y frenos del hardware. Dejalo abierto en otra pantalla o revisalo después de jugar.", panelMonitor);
             Pagina("limpieza", "", "Limpieza", "Libera espacio de forma segura. No borra la caché de shaders, porque causaría tirones.", panelLimpieza);
             Pagina("espacio", "\uEDA2", "Espacio en disco", "Muestra qué ocupa más lugar. No borra nada: abrí la carpeta y decidí vos qué sacar.", ConstruirEspacio());
-            Pagina("apps", "\uE74D", "Quitar apps de Windows", "Copilot, Edge y las apps que vienen con Windows y casi nadie usa. Cada una se puede reinstalar.", panelApps);
+            Pagina("apps", "\uE74D", "Quitar apps", "Copilot, Edge y las apps que vienen con Windows y casi nadie usa. Cada una se puede reinstalar.", panelApps);
             Pagina("red", "", "Red", "Elegí el DNS y vaciá su caché. Un DNS distinto no da más FPS ni menos ping en el juego; puede acelerar la carga de páginas.", panelRed);
             Pagina("instalar", "", "Instalar", "Instala programas y drivers desde fuentes oficiales.", ConstruirInstalar());
             Pagina("ordenar", "\uE8B7", "Ordenar escritorio", "Pone en carpetas los archivos sueltos del escritorio o de Descargas. No borra nada y se puede deshacer.", ConstruirOrdenar());
@@ -695,7 +695,7 @@ namespace OptimizadorPC
             string nivel = Juegos.NivelDe(diag.Filas.Where(f => f.Key == "Placa de video").Select(f => f.Value));
             var ult = Historial.Leer().LastOrDefault();
             int limite = Salud.LimiteFps();
-            if (ult != null && ult.Bajo1 > 0) { int s = (int)Math.Round(ult.Bajo1 * 1.25 / 10) * 10; if (s < limite) limite = s; }
+            int sostenible = Salud.LimiteSostenible(ult); if (sostenible > 0 && sostenible < limite) limite = sostenible;
             var lista = await Task.Run(() => Juegos.Detectar(nivel, limite));
             panelJuegos.Children.Clear();
             panelJuegos.Children.Add(Caja(Texto(Salud.RecomendarLimite(ult), 13.5, Tinta)));
@@ -1308,14 +1308,14 @@ namespace OptimizadorPC
             juegosExtra.LostFocus += delegate { Partida.GuardarJuegosExtra(juegosExtra.Text); juegosExtra.Text = string.Join(", ", Partida.JuegosExtra()); };
             extra.Children.Add(juegosExtra);
             c.Children.Add(extra);
-            gpuAlta = new CheckBox { Content = "Usar la placa de video de alto rendimiento en los juegos (para notebooks con dos placas)", Foreground = Suave, FontSize = 12.5, Margin = new Thickness(0, 10, 0, 0), IsChecked = Util.Preferencia("gpuAlta") == "1", Visibility = Visibility.Collapsed };
+            gpuAlta = new CheckBox { Content = new TextBlock { Text = "Usar la placa de video de alto rendimiento en los juegos (para notebooks con dos placas)", TextWrapping = TextWrapping.Wrap, MaxWidth = 640 }, Foreground = Suave, FontSize = 12.5, Margin = new Thickness(0, 10, 0, 0), IsChecked = Util.Preferencia("gpuAlta") == "1", Visibility = Visibility.Collapsed };
             gpuAlta.Click += delegate
             {
                 Util.GuardarPreferencia("gpuAlta", gpuAlta.IsChecked == true ? "1" : "0");
                 if (gpuAlta.IsChecked != true) { try { Partida.QuitarGpuAlta(); } catch (Exception ex) { MessageBox.Show(this, ex.Message, Title); } }
             };
             c.Children.Add(gpuAlta);
-            sinOptPantalla = new CheckBox { Content = "Desactivar las optimizaciones de pantalla completa en los juegos que detecte (algunos juegos van más fluidos; si notás algo raro, desmarcalo)", Foreground = Suave, FontSize = 12.5, Margin = new Thickness(0, 8, 0, 0), IsChecked = Util.Preferencia("sinOptPantalla") == "1" };
+            sinOptPantalla = new CheckBox { Content = new TextBlock { Text = "Desactivar las optimizaciones de pantalla completa en los juegos que detecte (algunos juegos van más fluidos; si notás algo raro, desmarcalo)", TextWrapping = TextWrapping.Wrap, MaxWidth = 640 }, Foreground = Suave, FontSize = 12.5, Margin = new Thickness(0, 8, 0, 0), IsChecked = Util.Preferencia("sinOptPantalla") == "1" };
             sinOptPantalla.Click += delegate
             {
                 Util.GuardarPreferencia("sinOptPantalla", sinOptPantalla.IsChecked == true ? "1" : "0");
@@ -1661,7 +1661,8 @@ namespace OptimizadorPC
                 // Se dibuja con un pincel para que el margen del elemento no desplace la imagen
                 var dv = new DrawingVisual();
                 using (var dc = dv.RenderOpen()) { dc.DrawRectangle(Fondo, null, new Rect(0, 0, fe.ActualWidth, fe.ActualHeight)); dc.DrawRectangle(new VisualBrush(fe), null, new Rect(0, 0, fe.ActualWidth, fe.ActualHeight)); }
-                var bmp = new RenderTargetBitmap((int)fe.ActualWidth, (int)fe.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                // Al doble de resolución, para la web y los videos
+                var bmp = new RenderTargetBitmap((int)(fe.ActualWidth * 2), (int)(fe.ActualHeight * 2), 192, 192, PixelFormats.Pbgra32);
                 bmp.Render(dv);
                 var enc = new PngBitmapEncoder();
                 enc.Frames.Add(BitmapFrame.Create(bmp));
@@ -1797,6 +1798,9 @@ namespace OptimizadorPC
             bool prueba = args.Length >= 2 && args[0] == "--prueba";
             if (prueba && args.Length == 3) Diagnostico.BuildSimulado = int.Parse(args[2]);
             Util.ModoPrueba = prueba;
+            // Solo para capturas: datos de prueba en otra carpeta (mediciones, preferencias)
+            string datosPrueba = Environment.GetEnvironmentVariable("FRAMELAB_DATOS");
+            if (prueba && !string.IsNullOrEmpty(datosPrueba)) Motor.RutaRespaldo = Path.Combine(datosPrueba, "respaldo.json");
             // Dos ventanas abiertas a la vez podían pisarse las copias de los valores anteriores
             bool primera;
             var unica = new System.Threading.Mutex(true, "Local\\FrameLab_UnaSolaVentana", out primera);

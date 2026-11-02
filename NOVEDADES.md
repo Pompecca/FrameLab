@@ -1,3 +1,13 @@
+# Novedades de FrameLab 1.0
+
+## Versión 1.0
+
+- **Primera versión estable.** Se probó con ajustes reales en dos PC muy distintas: una con Windows 11, AtlasOS, i5 y GTX 1050 Ti, y otra con Windows 10 22H2 de fábrica, i3-3220 y GT 710. En esta última la RAM en uso bajó unos 2 GB.
+- **Licencia MIT** y código abierto en GitHub.
+- Ya no dice "beta". Las actualizaciones desde la app funcionan solas porque el repositorio es público.
+- **Límite de FPS recomendado:** ahora es el 85 % del promedio de tu última partida. Antes salía de los mínimos del 1 % y quedaba muy bajo: 80 FPS en una PC que hace 139.
+- Correcciones visuales: la sección se llama "Quitar apps" para que entre en el menú, y los textos largos de Modo partida ya no se cortan.
+
 # Novedades de FrameLab 0.8.2
 
 ## Cambios en 0.8.2

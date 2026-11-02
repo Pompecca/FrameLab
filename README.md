@@ -2,7 +2,7 @@
 
 Optimizador de Windows para juegos, en español. Es portable: un solo `.exe`, sin instalación.
 
-> Estado: beta privada (0.8.2). Probado en Windows 11. En Windows 10 22H2 se probó el diagnóstico, que no cambia nada.
+> Versión 1.0. Probada en Windows 11 (PC con AtlasOS, i5 y GTX 1050 Ti) y en Windows 10 22H2 de fábrica (i3-3220 y GT 710).
 
 ## Cómo se usa, en 3 pasos
 
@@ -87,10 +87,10 @@ PresentMon (Intel, licencia MIT) no se incluye: se descarga de su GitHub oficial
 
 ### Licencias de otros proyectos
 
-Los ajustes se investigaron en Atlas (GPL-3.0), ReviOS (CC-BY-SA-4.0) y WinUtil (MIT), pero el código es propio. No copies código de esos proyectos sin cumplir su licencia. Falta elegir una licencia para esta app.
+Los ajustes se investigaron en Atlas (GPL-3.0), ReviOS (CC-BY-SA-4.0) y WinUtil (MIT), pero el código es propio. No copies código de esos proyectos sin cumplir su licencia. FrameLab se publica con licencia MIT: ver `LICENSE`.
 
-### Antes de publicarla
+### Pendiente
 
 - **Firma de código:** sin ella, Windows muestra una advertencia a quien la descargue. Las opciones son un certificado de firma de código de una autoridad certificadora, o Azure Trusted Signing. Ambas tienen costo y requisitos de identidad; hay que revisar los precios actuales.
 - **Actualizaciones:** poné en `%LOCALAPPDATA%\FrameLab\actualizaciones.txt` una dirección `https://` que devuelva `{"version":"x.y.z","descarga":"https://..."}`.
-- **Pruebas:** hasta ahora solo se probó en una PC de escritorio con AtlasOS y placa NVIDIA. Windows 10 no se probó en una PC real.
+- **Pruebas:** probada en una PC de escritorio con Windows 11 (AtlasOS, NVIDIA) y en otra con Windows 10 22H2 de fábrica (i3-3220, GT 710). Falta probarla en notebooks y con placas AMD o Intel.

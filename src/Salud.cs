@@ -155,17 +155,25 @@ namespace OptimizadorPC
             return l;
         }
 
+        // Un tope un poco por debajo de lo que la PC sostiene: estable se siente mejor que picos altos.
+        // Se usa el 85 % del promedio: con los mínimos del 1 % el tope quedaba muy bajo (80 FPS en una PC que hace 139)
+        public static int LimiteSostenible(Resultado r)
+        {
+            if (r == null || r.Fps <= 0) return 0;
+            return (int)Math.Round(r.Fps * 0.85 / 10) * 10;
+        }
+
         // Capa la cifra para no pedir más de lo que la PC sostiene: un tope estable se nota más que picos altos
         public static string RecomendarLimite(Resultado ultimo)
         {
             int ha, hm; Hz(out ha, out hm);
             if (ha <= 3) return "No se pudo leer la frecuencia del monitor.";
             int tope = ha - 3;
-            if (ultimo != null && ultimo.Bajo1 > 0)
+            if (ultimo != null && ultimo.Fps > 0)
             {
-                int sostenible = (int)Math.Round(ultimo.Bajo1 * 1.25 / 10) * 10;
+                int sostenible = LimiteSostenible(ultimo);
                 if (sostenible > 0 && sostenible < tope)
-                    return "Limitá los FPS a unos " + sostenible + " en el juego: tus mínimos del 1 % fueron " + Math.Round(ultimo.Bajo1) + " FPS y tu monitor va a " + ha + " Hz. Es una orientación: si sigue irregular, bajá de 10 en 10.";
+                    return "Limitá los FPS a unos " + sostenible + " en el juego: en tu última partida hiciste " + Math.Round(ultimo.Fps) + " FPS de promedio y tu monitor va a " + ha + " Hz. Un tope un poco por debajo de lo que tu PC sostiene se siente más parejo. Si notás tirones, bajá de 10 en 10.";
             }
             return "Limitá los FPS a " + tope + " en el juego, justo por debajo de los " + ha + " Hz de tu monitor. Es una orientación: medí una partida para ajustarla a tu PC.";
         }
