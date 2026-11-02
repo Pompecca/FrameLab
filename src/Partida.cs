@@ -133,7 +133,7 @@ namespace OptimizadorPC
         }
 
         // Se llama cada pocos segundos mientras dura. Devuelve los juegos que encontró
-        public static List<string> Vigilar(bool gpuAlta)
+        public static List<string> Vigilar(bool gpuAlta, bool sinOptimizacionPantalla = false)
         {
             var encontrados = new List<string>();
             if (estado == null) return encontrados;
@@ -152,6 +152,7 @@ namespace OptimizadorPC
                             cambio = true;
                         }
                         if (gpuAlta) GpuAlta(p.MainModule.FileName);
+                        if (sinOptimizacionPantalla) PantallaCompleta(p.MainModule.FileName);
                     }
                     catch (Exception) { }
                     finally { p.Dispose(); }
@@ -245,5 +246,33 @@ namespace OptimizadorPC
         }
 
         public static void GpuAltaPrueba(string exe) { GpuAlta(exe); }
+
+        // ---------- Optimizaciones de pantalla completa por juego (la casilla oficial de Propiedades > Compatibilidad) ----------
+        public static string RutaClaveCompat = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
+        const string SinOptimizacion = "~ DISABLEDXMAXIMIZEDWINDOWEDMODE";
+
+        // Si el juego ya tiene opciones de compatibilidad propias, no se tocan
+        public static void PantallaCompleta(string exe)
+        {
+            var hechos = AgregadosPantalla();
+            using (var k = Registry.CurrentUser.CreateSubKey(RutaClaveCompat))
+            {
+                if (k.GetValue(exe) != null) return;
+                k.SetValue(exe, SinOptimizacion, RegistryValueKind.String);
+            }
+            hechos.Add(exe);
+            Util.GuardarPreferencia("pantallaAgregados", string.Join("|", hechos));
+        }
+
+        public static List<string> AgregadosPantalla() { return (Util.Preferencia("pantallaAgregados") ?? "").Split('|').Where(x => x != "").ToList(); }
+
+        public static void QuitarPantallaCompleta()
+        {
+            using (var k = Registry.CurrentUser.OpenSubKey(RutaClaveCompat, true))
+                if (k != null)
+                    foreach (var exe in AgregadosPantalla())
+                        if (Convert.ToString(k.GetValue(exe)) == SinOptimizacion) k.DeleteValue(exe, false);
+            Util.GuardarPreferencia("pantallaAgregados", "");
+        }
     }
 }

@@ -1,8 +1,8 @@
-﻿# FrameLab
+# FrameLab
 
 Optimizador de Windows para juegos, en espaÃ±ol. Es portable: un solo `.exe`, sin instalaciÃ³n.
 
-> Estado: beta privada (0.6.1). Probado en Windows 11. En Windows 10 22H2 se probÃ³ el diagnÃ³stico, que no cambia nada.
+> Estado: beta privada (0.7.0). Probado en Windows 11. En Windows 10 22H2 se probÃ³ el diagnÃ³stico, que no cambia nada.
 
 ## CÃ³mo se usa, en 3 pasos
 
@@ -19,7 +19,7 @@ En la misma pantalla, **QuÃ© frena tu PC** te dice quÃ© es lo que mÃ¡s lim
 - **Optimizar (modo simple):** un botÃ³n que crea un punto de restauraciÃ³n y aplica solo los ajustes seguros que sirven en tu PC. Otro botÃ³n, **Deshacer todo**, los revierte.
 - **QuÃ© frena tu PC:** ordena lo que mÃ¡s limita los juegos (placa de video, disco, RAM, procesador, drivers, apagados, programas al iniciar) y avisa cuÃ¡ndo los ajustes de Windows van a ayudar poco.
 - **DiagnÃ³stico:** hardware, XMP, canales de RAM, discos, Hz del monitor, PCIe, BIOS, drivers y apagados inesperados.
-- **Optimizaciones:** 98 ajustes de Windows en tres perfiles (Seguro, Gamer y Avanzado). Cada uno muestra quÃ© cambia, su impacto, su riesgo y si ya estÃ¡ aplicado.
+- **Optimizaciones:** 101 ajustes de Windows en tres perfiles (Seguro, Gamer y Avanzado). Cada uno muestra quÃ© cambia, su impacto, su riesgo y si ya estÃ¡ aplicado.
 - **Juegos:** ajusta Fortnite, Roblox y Minecraft (Java y Bedrock) usando solo sus archivos de configuraciÃ³n oficiales, con copia previa. Para Valorant y CS2 da una guÃ­a para ajustarlos a mano, porque tienen antitrampas.
 - **Modo partida:** antes de jugar cierra los programas que elijas y le da prioridad al juego. Al terminar, todo vuelve a como estaba y los programas se vuelven a abrir.
 - **PersonalizaciÃ³n:** fondo propio de FrameLab para la app y para el escritorio, con botÃ³n para volver al fondo anterior.
@@ -66,6 +66,7 @@ Usa el compilador de .NET Framework que ya trae Windows. No hace falta instalar 
 - `src\Medicion.cs`: mediciÃ³n con PresentMon y anÃ¡lisis.
 - `src\Extras.cs`: juegos (Fortnite, Roblox y Minecraft), limpieza, apps y actualizaciones.
 - `src\Partida.cs`: modo partida. `src\Fondo.cs`: fondo de FrameLab.
+- `src\Ordenar.cs`: ordenar el escritorio y Descargas.
 - `src\Frenos.cs`: "QuÃ© frena tu PC", la tabla de gamas de placas de video y el asistente de espacio.
 - `src\Ventana.cs`: interfaz. `src\Tema.xaml`: colores y estilos.
 - `crear_logo.ps1`: genera el logo.

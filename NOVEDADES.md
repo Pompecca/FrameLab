@@ -1,3 +1,21 @@
+# Novedades de FrameLab 0.7.0
+
+## Cambios en 0.7.0
+
+- **Ordenar escritorio (sección nueva):** pone en carpetas por tipo los archivos sueltos del escritorio o de Descargas: Imágenes, Documentos, Videos, Música, Instaladores, Comprimidos y Otros. Los accesos directos se incluyen solo si los marcás. Antes muestra la lista para desmarcar lo que quieras dejar, nunca mueve carpetas ni pisa archivos con el mismo nombre, y **Deshacer orden** devuelve todo a su lugar.
+- **Más optimizaciones** (3 ajustes nuevos, 101 en total):
+  - **Optimizaciones para juegos en ventana** (Windows 11): menos latencia en ventana y en ventana sin bordes.
+  - **Xbox Game Bar sin interrupciones:** no muestra consejos ni se abre con el botón Xbox del control.
+  - **Sin limitación de energía en segundo plano:** solo PC de escritorio, en el perfil Avanzado.
+  - "Efectos visuales al mínimo" ahora mantiene el suavizado de letras.
+- **Modo partida:** opción para desactivar las optimizaciones de pantalla completa en los juegos que detecta. Solo agrega la marca si el juego no tenía otra opción de compatibilidad, y al desmarcarla quita solo lo suyo.
+
+Ya estaban en el catálogo y no se duplicaron: el mouse sin aceleración, HAGS, la suspensión selectiva de USB, el ahorro de energía de PCIe, el estado mínimo de la CPU, el retraso de inicio, el Modo de juego, las apps en segundo plano, las capturas de Game Bar, la Optimización de entrega y los consejos de Windows. La caché de sombreadores de NVIDIA ya figura en la guía de NVIDIA.
+
+No se agregaron:
+- **No molestar automático mientras jugás:** no encontré una forma documentada de activarlo.
+- **Storage Sense activado:** el catálogo ya tiene la opción contraria.
+
 # Novedades de FrameLab 0.6.1
 
 ## Cambios en 0.6.1

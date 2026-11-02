@@ -163,6 +163,7 @@ namespace OptimizadorPC
             Pagina("apps", "", "Apps preinstaladas", "Quita apps que vienen con Windows. Podés reinstalarlas desde Microsoft Store.", panelApps);
             Pagina("red", "", "Red", "Elegí el DNS y vaciá su caché. Un DNS distinto no da más FPS ni menos ping en el juego; puede acelerar la carga de páginas.", panelRed);
             Pagina("instalar", "", "Instalar", "Instala programas y drivers desde fuentes oficiales.", ConstruirInstalar());
+            Pagina("ordenar", "\uE8B7", "Ordenar escritorio", "Pone en carpetas los archivos sueltos del escritorio o de Descargas. No borra nada y se puede deshacer.", ConstruirOrdenar());
             Pagina("personalizacion", "\uE771", "Personalización", "El fondo de la app y un fondo de escritorio propio de FrameLab.", ConstruirPersonalizacion());
             Pagina("acerca", "", "Acerca de", "Versión y actualizaciones.", ConstruirAcerca());
             ((RadioButton)menu.Children[0]).IsChecked = true;
@@ -175,7 +176,7 @@ namespace OptimizadorPC
         }
 
         // En modo simple solo quedan las secciones que no requieren saber de Windows
-        static readonly string[] SeccionesSimples = { "simple", "juegos", "espacio", "personalizacion", "acerca" };
+        static readonly string[] SeccionesSimples = { "simple", "juegos", "espacio", "ordenar", "personalizacion", "acerca" };
 
         void AplicarModo(bool avanzado)
         {
@@ -1128,7 +1129,7 @@ namespace OptimizadorPC
         readonly StackPanel listaPartida = new StackPanel();
         readonly TextBlock estadoPartida = Texto("", 13, Suave);
         Button botonPartida, botonFinPartida;
-        CheckBox gpuAlta;
+        CheckBox gpuAlta, sinOptPantalla;
         DispatcherTimer relojPartida;
 
         UIElement CuerpoJuegos()
@@ -1159,6 +1160,13 @@ namespace OptimizadorPC
                 if (gpuAlta.IsChecked != true) { try { Partida.QuitarGpuAlta(); } catch (Exception ex) { MessageBox.Show(this, ex.Message, Title); } }
             };
             c.Children.Add(gpuAlta);
+            sinOptPantalla = new CheckBox { Content = "Desactivar las optimizaciones de pantalla completa en los juegos que detecte (algunos juegos van más fluidos; si notás algo raro, desmarcalo)", Foreground = Suave, FontSize = 12.5, Margin = new Thickness(0, 8, 0, 0), IsChecked = Util.Preferencia("sinOptPantalla") == "1" };
+            sinOptPantalla.Click += delegate
+            {
+                Util.GuardarPreferencia("sinOptPantalla", sinOptPantalla.IsChecked == true ? "1" : "0");
+                if (sinOptPantalla.IsChecked != true) { try { Partida.QuitarPantallaCompleta(); } catch (Exception ex) { MessageBox.Show(this, ex.Message, Title); } }
+            };
+            c.Children.Add(sinOptPantalla);
             estadoPartida.Margin = new Thickness(0, 8, 0, 0);
             c.Children.Add(estadoPartida);
             var nota = Texto("Para saber cuánto te sirve, medí una partida sin el modo partida y otra con el modo partida activo, desde Medir partida. En PCs con poca RAM o un procesador de 4 hilos suele notarse en menos tirones; en PCs potentes la diferencia es chica.", 12, Suave);
@@ -1202,10 +1210,10 @@ namespace OptimizadorPC
                 relojPartida = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
                 relojPartida.Tick += async delegate
                 {
-                    bool gpu = gpuAlta.IsChecked == true && gpuAlta.Visibility == Visibility.Visible;
+                    bool gpu = gpuAlta.IsChecked == true && gpuAlta.Visibility == Visibility.Visible, pantalla = sinOptPantalla.IsChecked == true;
                     try
                     {
-                        var j = await Task.Run(() => Partida.Vigilar(gpu));
+                        var j = await Task.Run(() => Partida.Vigilar(gpu, pantalla));
                         if (j.Any()) estadoPartida.Text = "Modo partida activo. Juego detectado: " + string.Join(", ", j) + ", con prioridad alta.";
                     }
                     catch (Exception ex) { Util.RegistrarError(ex); }
@@ -1244,6 +1252,91 @@ namespace OptimizadorPC
             bool reabrir = pendientes.Any() && MessageBox.Show(this, "El modo partida no terminó bien la última vez. Ya se restauró el plan de energía y la búsqueda de Windows.\n\n¿Volver a abrir los programas que se habían cerrado (" + string.Join(", ", pendientes.Select(Path.GetFileNameWithoutExtension)) + ")?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
             try { Partida.Terminar(reabrir); }
             catch (Exception ex) { Util.RegistrarError(ex); }
+        }
+
+        // ---------- Ordenar escritorio ----------
+        readonly StackPanel listaOrden = new StackPanel();
+        readonly TextBlock estadoOrden = Texto("", 13, Suave);
+        string raizOrden;
+        Button botonOrdenar, botonDeshacerOrden;
+
+        UIElement ConstruirOrdenar()
+        {
+            var s = new StackPanel();
+            var c = new StackPanel();
+            c.Children.Add(Texto("Mueve los archivos sueltos a carpetas por tipo: Imágenes, Documentos, Videos, Música, Instaladores, Comprimidos y Otros. Las carpetas que ya tenés no se tocan. Antes de mover nada te muestra la lista, y después lo podés deshacer.", 12.5, Suave));
+            var accesos = new CheckBox { Content = "Incluir los accesos directos (si no, se quedan en el escritorio)", Foreground = Suave, FontSize = 12.5, Margin = new Thickness(0, 10, 0, 0) };
+            c.Children.Add(accesos);
+            var fila = new WrapPanel { Margin = new Thickness(0, 10, 0, 0) };
+            var esc = Boton("Revisar el escritorio", true);
+            var des = Boton("Revisar Descargas");
+            botonOrdenar = Boton("Ordenar los marcados", true); botonOrdenar.IsEnabled = false;
+            botonDeshacerOrden = Boton("Deshacer orden");
+            fila.Children.Add(esc); fila.Children.Add(des); fila.Children.Add(botonOrdenar); fila.Children.Add(botonDeshacerOrden);
+            c.Children.Add(fila);
+            estadoOrden.Margin = new Thickness(0, 6, 0, 0);
+            c.Children.Add(estadoOrden);
+            s.Children.Add(Caja(c));
+            s.Children.Add(listaOrden);
+
+            Action<string> revisar = raiz =>
+            {
+                raizOrden = raiz;
+                listaOrden.Children.Clear();
+                botonDeshacerOrden.IsEnabled = Ordenar.HayParaDeshacer(raiz);
+                List<Movimiento> plan;
+                try { plan = Ordenar.Planear(raiz, accesos.IsChecked == true); }
+                catch (Exception ex) { estadoOrden.Text = "No se pudo revisar: " + ex.Message; return; }
+                estadoOrden.Text = plan.Count == 0 ? "No hay archivos sueltos para ordenar en " + raiz + "." : plan.Count + " archivos sueltos en " + raiz + ". Desmarcá los que quieras dejar donde están.";
+                botonOrdenar.IsEnabled = plan.Count > 0;
+                foreach (var g in plan.GroupBy(m => m.Categoria))
+                {
+                    var p = new StackPanel();
+                    p.Children.Add(Texto(g.Key + "  (" + g.Count() + ")", 14, Tinta, true));
+                    foreach (var m in g)
+                        p.Children.Add(new CheckBox { Content = Path.GetFileName(m.Origen), Tag = m, IsChecked = true, Foreground = Suave, FontSize = 12.5, Margin = new Thickness(0, 4, 0, 0) });
+                    listaOrden.Children.Add(Caja(p));
+                }
+            };
+            esc.Click += delegate { revisar(Ordenar.Escritorio); };
+            des.Click += delegate { revisar(Ordenar.Descargas); };
+            accesos.Click += delegate { if (raizOrden != null) revisar(raizOrden); };
+            botonDeshacerOrden.IsEnabled = Ordenar.HayParaDeshacer(Ordenar.Escritorio);
+            raizOrden = Ordenar.Escritorio;
+
+            botonOrdenar.Click += async delegate
+            {
+                var elegidos = listaOrden.Children.OfType<Border>().Select(b => b.Child).OfType<StackPanel>().SelectMany(p => p.Children.OfType<CheckBox>()).Where(x => x.IsChecked == true).Select(x => (Movimiento)x.Tag).ToList();
+                if (elegidos.Count == 0) return;
+                if (MessageBox.Show(this, "Se van a mover " + elegidos.Count + " archivos a carpetas por tipo dentro de " + raizOrden + ". Lo podés deshacer después. ¿Seguir?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+                botonOrdenar.IsEnabled = false;
+                var salteados = new List<string>();
+                string raiz = raizOrden;
+                try
+                {
+                    int n = await Task.Run(() => Ordenar.Aplicar(raiz, elegidos, salteados));
+                    listaOrden.Children.Clear();
+                    estadoOrden.Text = "Listo: se ordenaron " + n + " archivos." + (salteados.Any() ? " Quedaron sin mover porque estaban en uso: " + string.Join(", ", salteados) + "." : "");
+                }
+                catch (Exception ex) { estadoOrden.Text = "No se pudo terminar: " + ex.Message + " Lo que se movió se puede deshacer."; }
+                botonDeshacerOrden.IsEnabled = Ordenar.HayParaDeshacer(raiz);
+            };
+            botonDeshacerOrden.Click += async delegate
+            {
+                string raiz = raizOrden;
+                if (!Ordenar.HayParaDeshacer(raiz)) { estadoOrden.Text = "No hay un orden para deshacer en " + raiz + "."; return; }
+                if (MessageBox.Show(this, "Los archivos que ordenó la app en " + raiz + " van a volver a donde estaban. ¿Seguir?", Title, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+                var problemas = new List<string>();
+                try
+                {
+                    int n = await Task.Run(() => Ordenar.Deshacer(raiz, problemas));
+                    estadoOrden.Text = n + " archivos volvieron a su lugar." + (problemas.Any() ? "\n" + string.Join("\n", problemas) : "");
+                }
+                catch (Exception ex) { estadoOrden.Text = ex.Message; }
+                listaOrden.Children.Clear();
+                botonDeshacerOrden.IsEnabled = Ordenar.HayParaDeshacer(raiz);
+            };
+            return s;
         }
 
         // ---------- Personalización ----------
@@ -1779,6 +1872,39 @@ namespace OptimizadorPC
                 Partida.QuitarGpuAlta();
                 using (var k = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(Partida.RutaClaveGpu))
                     ok("gpu: la quita", k.GetValue(@"C:\Juegos\juego.exe") == null);
+
+                // Pantalla completa por juego, sobre una clave de prueba; respeta opciones previas
+                Partida.RutaClaveCompat = clave + "\\Compat";
+                using (var k = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(Partida.RutaClaveCompat)) k.SetValue(@"C:\Juegos\otro.exe", "~ RUNASADMIN");
+                Partida.PantallaCompleta(@"C:\Juegos\juego.exe");
+                Partida.PantallaCompleta(@"C:\Juegos\otro.exe");
+                using (var k = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(Partida.RutaClaveCompat))
+                    ok("pantalla: agrega y respeta lo previo", (string)k.GetValue(@"C:\Juegos\juego.exe") == "~ DISABLEDXMAXIMIZEDWINDOWEDMODE" && (string)k.GetValue(@"C:\Juegos\otro.exe") == "~ RUNASADMIN");
+                Partida.QuitarPantallaCompleta();
+                using (var k = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(Partida.RutaClaveCompat))
+                    ok("pantalla: quita solo lo suyo", k.GetValue(@"C:\Juegos\juego.exe") == null && k.GetValue(@"C:\Juegos\otro.exe") != null);
+
+                // Ordenar: carpeta de prueba con archivos, una carpeta propia, un oculto y un nombre repetido
+                string esc = Path.Combine(carpeta, "escritorio");
+                Directory.CreateDirectory(Path.Combine(esc, "Mis cosas"));
+                Directory.CreateDirectory(Path.Combine(esc, "Imágenes"));
+                foreach (var n in new[] { "foto.jpg", "tarea.docx", "juego.lnk", "setup.exe", "raro.xyz", "canción.mp3" }) File.WriteAllText(Path.Combine(esc, n), n);
+                File.WriteAllText(Path.Combine(esc, "Imágenes", "foto.jpg"), "ya estaba");
+                File.WriteAllText(Path.Combine(esc, "oculto.txt"), "x"); File.SetAttributes(Path.Combine(esc, "oculto.txt"), FileAttributes.Hidden);
+                File.WriteAllText(Path.Combine(esc, "desktop.ini"), "x");
+                var plan = Ordenar.Planear(esc, false);
+                ok("ordenar: solo archivos visibles y sin accesos", plan.Count == 5 && !plan.Any(m => m.Origen.EndsWith(".lnk") || m.Origen.EndsWith("oculto.txt") || m.Origen.EndsWith("desktop.ini")));
+                var salteados = new List<string>();
+                int movidos = Ordenar.Aplicar(esc, plan, salteados);
+                ok("ordenar: mueve por tipo", movidos == 5 && File.Exists(Path.Combine(esc, @"Documentos\tarea.docx")) && File.Exists(Path.Combine(esc, @"Otros\raro.xyz")) && File.Exists(Path.Combine(esc, @"Instaladores\setup.exe")));
+                ok("ordenar: no pisa archivos con el mismo nombre", File.Exists(Path.Combine(esc, @"Imágenes\foto (2).jpg")) && File.ReadAllText(Path.Combine(esc, @"Imágenes\foto.jpg")) == "ya estaba");
+                ok("ordenar: no toca carpetas propias", Directory.Exists(Path.Combine(esc, "Mis cosas")));
+                var problemas = new List<string>();
+                int vueltos = Ordenar.Deshacer(esc, problemas);
+                ok("ordenar: deshace todo", vueltos == 5 && File.ReadAllText(Path.Combine(esc, "foto.jpg")) == "foto.jpg" && File.Exists(Path.Combine(esc, "raro.xyz")) && problemas.Count == 0);
+                ok("ordenar: borra solo las carpetas que creó y quedaron vacías", !Directory.Exists(Path.Combine(esc, "Documentos")) && Directory.Exists(Path.Combine(esc, "Imágenes")) && !Ordenar.HayParaDeshacer(esc));
+                File.SetAttributes(Path.Combine(esc, "oculto.txt"), FileAttributes.Normal);
+                Directory.Delete(esc, true);
 
                 // Fondo: se dibuja y se guarda/restaura el anterior sobre una clave de prueba, sin cambiar el fondo real
                 string png = Path.Combine(carpeta, "fondo.png");

@@ -66,7 +66,7 @@
         "id":  "efectos-minimos",
         "windows":  "10,11",
         "nombre":  "Efectos visuales al mínimo",
-        "descripcion":  "Quita animaciones y sombras de Windows. Se ve más simple.",
+        "descripcion":  "Quita animaciones y sombras de Windows. Se ve más simple, pero las letras siguen suavizadas.",
         "categoria":  "Rendimiento",
         "impacto":  "Bajo",
         "riesgo":  "Bajo",
@@ -101,6 +101,13 @@
                              "valor":  "EnableAeroPeek",
                              "tipoValor":  "DWord",
                              "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Control Panel\\Desktop",
+                             "valor":  "FontSmoothing",
+                             "tipoValor":  "String",
+                             "dato":  "2"
                          }
                      ]
     },
@@ -2365,5 +2372,79 @@
                              "dato":  "0"
                          }
                      ]
+    },
+    {
+        "id":  "juegos-ventana",
+        "windows":  "11",
+        "nombre":  "Optimizaciones para juegos en ventana",
+        "descripcion":  "Baja la latencia de los juegos en ventana y en ventana sin bordes. Es la opción oficial de Windows 11 en Configuración > Pantalla > Gráficos.",
+        "categoria":  "Juegos",
+        "impacto":  "Medio",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\DirectX\\UserGpuPreferences",
+                             "valor":  "DirectXUserGlobalSettings",
+                             "tipoValor":  "String",
+                             "dato":  "SwapEffectUpgradeEnable=1;"
+                         }
+                     ]
+    },
+    {
+        "id":  "gamebar-avisos",
+        "windows":  "10,11",
+        "nombre":  "Xbox Game Bar sin interrupciones",
+        "descripcion":  "No muestra consejos al abrir un juego ni se abre con el botón Xbox del control. La Game Bar sigue disponible con Windows + G.",
+        "categoria":  "Juegos",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Seguro",
+                         "Gamer",
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\GameBar",
+                             "valor":  "ShowStartupPanel",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         },
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKCU\\Software\\Microsoft\\GameBar",
+                             "valor":  "UseNexusForGameBarEnabled",
+                             "tipoValor":  "DWord",
+                             "dato":  "0"
+                         }
+                     ]
+    },
+    {
+        "id":  "sin-limitacion-energia",
+        "windows":  "10,11",
+        "nombre":  "Sin limitación de energía en segundo plano",
+        "descripcion":  "Windows deja de frenar los programas de fondo para ahorrar energía. Ayuda sobre todo en procesadores con núcleos de eficiencia.",
+        "categoria":  "Rendimiento",
+        "impacto":  "Bajo",
+        "riesgo":  "Bajo",
+        "perfiles":  [
+                         "Avanzado"
+                     ],
+        "acciones":  [
+                         {
+                             "tipo":  "registro",
+                             "ruta":  "HKLM\\SYSTEM\\CurrentControlSet\\Control\\Power\\PowerThrottling",
+                             "valor":  "PowerThrottlingOff",
+                             "tipoValor":  "DWord",
+                             "dato":  "1"
+                         }
+                     ],
+        "soloEscritorio":  true
     }
 ]
