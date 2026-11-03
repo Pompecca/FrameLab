@@ -4,6 +4,8 @@ Optimizador de Windows para juegos, en español. Es portable: un solo `.exe`, si
 
 > Versión 1.0.3. Probada en Windows 11 (PC con AtlasOS, i5 y GTX 1050 Ti) y en Windows 10 22H2 de fábrica (i3-3220 y GT 710).
 
+Página: [pompecca.github.io/FrameLab](https://pompecca.github.io/FrameLab)
+
 ## Cómo se usa, en 3 pasos
 
 1. **Descargá `FrameLab.exe`** desde [Releases](../../releases), a la derecha de esta página. No se instala.

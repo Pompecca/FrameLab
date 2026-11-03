@@ -6,6 +6,12 @@
 <title>FrameLab</title>
 <meta name="description" content="Optimizá Windows para jugar con un botón, sacá lo que no usás y medí si tus juegos mejoraron de verdad. Todo se puede deshacer.">
 <link rel="icon" href="logo.png">
+<meta property="og:title" content="FrameLab: tu PC lista para jugar, con un botón">
+<meta property="og:description" content="App gratis y en español que optimiza Windows para jugar, saca lo que no usás y mide tus FPS. Todo se puede deshacer.">
+<meta property="og:image" content="https://pompecca.github.io/FrameLab/logo.png">
+<meta property="og:url" content="https://pompecca.github.io/FrameLab/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
 <style>
 :root{--fondo:#0b0e14;--lateral:#141821;--tarjeta:#1a1f2b;--borde:#2a3140;--tinta:#eef1f6;--suave:#9aa5b8;--acento:#22c7d6;--acento-tinta:#06242a;--violeta:#7a5cff;--ok:#3dd68c}
 *{box-sizing:border-box}
@@ -62,12 +68,12 @@ footer{border-top:1px solid var(--borde);padding:24px 0;color:var(--suave);font-
 <header>
   <div class="ancho barra">
     <a class="marca" href="#"><img src="logo.png" alt="">FrameLab</a>
-    <nav><a href="https://cafecito.app/framelabapp">☕ Cafecito</a><a href="#como">Cómo se usa</a><a href="#funciones">Funciones</a><a href="#partida">Modo partida</a><a href="#honesta">Sin humo</a><a href="#descargar">Descargar</a></nav>
+    <nav><a href="https://cafecito.app/framelabapp">☕ Cafecito</a><a href="#como">Cómo se usa</a><a href="#funciones">Funciones</a><a href="#partida">Modo partida</a><a href="#honesta">Sin humo</a><a href="#preguntas">Preguntas</a><a href="#descargar">Descargar</a></nav>
   </div>
 </header>
 <main>
   <div class="ancho portada">
-    <div class="etiqueta">Versión 1.0 · Gratis · En español · Código abierto</div>
+    <div class="etiqueta">Versión 1.0.3 · Gratis · En español · Código abierto</div>
     <h1>Tu PC lista para jugar, <span>con un botón</span>. Y si no te gusta, la volvés atrás.</h1>
     <p>FrameLab te dice qué frena tu PC, aplica solo ajustes seguros, saca lo que Windows trae y no usás, y mide tus partidas para que veas si de verdad mejoró.</p>
     <a class="boton" href="#descargar">Descargar para Windows</a><a class="boton sec" href="#como">Cómo se usa</a>
@@ -154,8 +160,17 @@ footer{border-top:1px solid var(--borde);padding:24px 0;color:var(--suave);font-
     </div>
   </section>
 
-  <section id="descargar" class="ancho">
-    <div class="tarjeta">
+  <section id="preguntas" class="ancho">
+    <h2>Preguntas frecuentes</h2>
+    <div class="rejilla">
+      <div class="tarjeta"><h3>¿Se actualiza sola?</h3><p>Sí. En Acerca de, "Buscar actualizaciones" te avisa si hay una versión nueva y la instala con un clic, sin perder tus ajustes ni las copias para deshacer.</p></div>
+      <div class="tarjeta"><h3>Medí una partida y me dio números raros</h3><p>Dejá el juego en primer plano mientras mide. Desde la versión 1.0.3 se descuentan las pausas y las cargas del principio y del final, y te avisa si algo tapó el juego, como un alt-tab o el overlay de Discord.</p></div>
+      <div class="tarjeta"><h3>Encontré un error</h3><p>Tocá "Reportar un problema" en Acerca de, o entrá a <a href="https://github.com/Pompecca/FrameLab/issues/new/choose">este formulario</a> en español. Contá qué pasó y lo arreglamos.</p></div>
+      <div class="tarjeta"><h3>¿Es seguro?</h3><p>Antes de cambiar algo crea un punto de restauración y guarda cada valor anterior. No desactiva el antivirus ni las actualizaciones, y no toca juegos con antitrampas.</p></div>
+    </div>
+  </section>
+
+  <section id="descargar" class="ancho">    <div class="tarjeta">
       <h2>Descargar</h2>
       <p>Descargá <b>FrameLab.exe</b> desde la página de versiones, abrilo y aceptá el permiso de administrador: lo pide porque cambia ajustes de Windows. Antes de aplicar nada crea un punto de restauración.</p>
       <p style="margin-top:10px">Si Windows muestra "Windows protegió su PC", tocá <b>Más información</b> y después <b>Ejecutar de todas formas</b>. Aparece porque la app todavía no tiene firma digital.</p>

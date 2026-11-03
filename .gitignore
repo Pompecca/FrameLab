@@ -15,10 +15,10 @@ fuentes/
 # Datos personales: capturas de esta PC, mediciones y copias de ajustes
 screenshots/
 capturas/
-web/*.png
-!web/capturas/
-!web/capturas/*.png
-!web/logo.png
+docs/*.png
+!docs/capturas/
+!docs/capturas/*.png
+!docs/logo.png
 *.csv
 respaldo*.json
 respaldo*.json.bak
