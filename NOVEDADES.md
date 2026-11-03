@@ -1,3 +1,12 @@
+# Novedades de FrameLab 1.0.3
+
+## Cambios en 1.0.3
+
+- **Medir partida descuenta las pausas:** un frame de más de 5 segundos significa que el juego estaba minimizado o en otra ventana, así que no cuenta para el promedio, los mínimos ni los tirones. El resultado dice cuánto se descontó. En la medición real del 02/11 a las 20:55, el promedio pasó de 82 FPS (con 2 min 16 s fuera del juego) a 136 FPS.
+- **Avisa cuando algo tapa el juego:** si los tirones aparecen cuando el juego deja la pantalla completa (alt-tab, una notificación o el overlay de Discord), lo explica y sugiere pantalla completa y desactivar el overlay, en lugar de culpar al hardware.
+- Si después de descontar las pausas queda menos de un minuto de juego, avisa que la medición es muy corta en lugar de mostrar números que asustan.
+- El recorte del primer minuto y de los últimos 30 segundos ahora se aplica a las mediciones de más de 3 minutos.
+
 # Novedades de FrameLab 1.0.2
 
 ## Cambios en 1.0.2

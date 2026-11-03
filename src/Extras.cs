@@ -490,7 +490,7 @@ namespace OptimizadorPC
 
     public static class Version
     {
-        public const string Actual = "1.0.2";
+        public const string Actual = "1.0.3";
         static string RutaConfig { get { return Path.Combine(Medicion.Carpeta, "actualizaciones.txt"); } }
         public const string Repositorio = "Pompecca/FrameLab";
         public const string PaginaDescargas = "https://github.com/" + Repositorio + "/releases";

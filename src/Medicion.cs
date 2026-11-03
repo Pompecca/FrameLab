@@ -204,12 +204,24 @@ namespace OptimizadorPC
 
             Func<string[], int, double> num = (p, i) => { double d; return i >= 0 && double.TryParse(p[i], NumberStyles.Any, CultureInfo.InvariantCulture, out d) ? d : double.NaN; };
             f2 = f2.Where(p => { double d = num(p, iMs); return !double.IsNaN(d) && d > 0; }).ToList();
+            // Un "frame" de varios segundos no es un tirón: el juego estaba minimizado o en otra ventana
+            var pausas = f2.Select(p => num(p, iMs)).Where(d => d > 5000).ToList();
+            f2 = f2.Where(p => num(p, iMs) <= 5000).ToList();
+            // Si el juego deja la pantalla completa (alt-tab, una notificación, el overlay de Discord), Windows pasa a componer la imagen
+            int iModo = cab.IndexOf("PresentMode"), perdidasFoco = 0;
+            if (iModo >= 0 && f2.Any())
+            {
+                string dominante = f2.GroupBy(p => p[iModo]).OrderByDescending(g => g.Count()).First().Key;
+                if (dominante.IndexOf("Independent", StringComparison.OrdinalIgnoreCase) >= 0)
+                    for (int k = 1; k < f2.Count; k++)
+                        if (f2[k - 1][iModo] == dominante && f2[k][iModo].StartsWith("Composed", StringComparison.OrdinalIgnoreCase)) perdidasFoco++;
+            }
             // Al empezar y al terminar casi siempre hay pausas de carga (entrar a la partida, compilar sombreadores, volver al menú)
             // que no son tirones del juego: en mediciones largas se dejan afuera el primer minuto y los últimos 30 segundos
             double duracion = f2.Sum(p => num(p, iMs));
             int recortados = 0;
             double pausaMaxBorde = 0;
-            if (duracion > 4 * 60000)
+            if (duracion > 3 * 60000)
             {
                 double t = 0;
                 var medio = new List<string[]>();
@@ -245,6 +257,9 @@ namespace OptimizadorPC
             res.GpuOcupada = gpu.Any() ? Math.Round(gpu.Average(), 1) : 0;
 
             // Qué tenían de distinto los frames lentos frente a los normales
+            // Si la mayoría de los frames lentos ocurrió con la imagen compuesta por Windows, algo tapaba el juego
+            var lentosTodos = f2.Where(p => num(p, iMs) > 25).ToList();
+            bool tironesTapado = perdidasFoco > 0 && iModo >= 0 && lentosTodos.Count >= 3 && lentosTodos.Count(p => p[iModo].StartsWith("Composed", StringComparison.OrdinalIgnoreCase)) * 2 >= lentosTodos.Count;
             string causa = "";
             if (iCpu >= 0 && iGpu >= 0)
             {
@@ -262,7 +277,9 @@ namespace OptimizadorPC
             var v = new StringBuilder();
             double ratio = res.Fps > 0 ? res.Bajo1 / res.Fps : 1;
             if (recortados > 0) v.Append("Se analizó la partida sin el primer minuto ni los últimos 30 segundos, donde están las cargas" + (pausaMaxBorde > 250 ? " (ahí hubo pausas de hasta " + (pausaMaxBorde / 1000).ToString("0.0") + " s, normales al entrar y salir)" : "") + ". ");
+            if (pausas.Any()) { var tp = TimeSpan.FromMilliseconds(pausas.Sum()); v.Append("Se " + (pausas.Count == 1 ? "descontó una pausa" : "descontaron " + pausas.Count + " pausas") + " (" + (tp.TotalMinutes >= 1 ? (int)tp.TotalMinutes + " min " + tp.Seconds + " s" : tp.Seconds + " s") + ") en " + (pausas.Count == 1 ? "la que" : "las que") + " el juego no estaba en pantalla. "); }
             v.Append("Promedio de " + Math.Round(res.Fps) + " FPS, con mínimos del 1 % de " + Math.Round(res.Bajo1) + " FPS. ");
+
             double pctPicos = 100.0 * res.Picos / ms.Count;
             // Con FPS altos los mínimos del 1 % siempre quedan lejos del promedio: lo que se siente son los frames muy lentos
             double minutos = Math.Max(1, res.Segundos / 60);
@@ -273,7 +290,7 @@ namespace OptimizadorPC
             v.Append(res.Picos + " frames de más de 25 ms (" + pctPicos.ToString("0.0") + " %). ");
             // Muchos frames igual de lentos no son tirones: suele ser un tope, y la CPU "ocupada" incluye esa espera
             if (ratio >= 0.85 && pctPicos > 80) v.Append("Los FPS son tan constantes que parece un límite activo (menú del juego, V-Sync o un tope de FPS), no un problema de hardware. Medí dentro de una partida. ");
-            else if (causa != "") v.Append(causa + " ");
+            else if (tironesTapado) v.Append("Los tirones aparecieron cuando algo se puso encima del juego (alt-tab, una notificación o el overlay de Discord): no son culpa de tu PC. Probá pantalla completa y desactivar el overlay. ");
             else if (res.GpuOcupada > res.CpuOcupada * 1.3) v.Append("En general limita la placa de video: bajá la resolución 3D o la calidad. ");
             else if (res.CpuOcupada > res.GpuOcupada * 1.3) v.Append("En general limita la CPU: bajá la distancia de visión y cerrá programas de fondo. ");
 
