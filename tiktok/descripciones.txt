@@ -1,0 +1,21 @@
+Serie "FPS sin humo" + tanda 2. Hora Argentina.
+
+0_hoy_jue05_no_borres_carpeta.mp4  ->  jueves 5/11 21:30
+NO borres la caché de shaders de NVIDIA 🚫 En mi PC pesa 6,85 GB y muchos limpiadores la borran para liberar espacio. Si la borrás, la placa vuelve a armar los efectos del juego y aparecen más tirones. ¿Vos la borraste alguna vez? 👇 #fortnite #pcgamer #fps #tirones #nvidia
+
+1_mie11_conte_cada_tiron.mp4  ->  miércoles 11/11 20:00
+Conté cada tirón de mi partida de Fortnite: 26 en 6 minutos 😳 Las pausas largas fueron en las cargas, al entrar y salir. Un tirón en la carga no es uno en plena pelea: medí antes de tocar nada. ¿A vos cuándo se te traba? 👇 #fortnite #tirones #fps #pcgamer #gaming
+
+2_jue12_config_1050ti.mp4  ->  jueves 12/11 20:00
+¿Tenés una GTX 1050 Ti? Esta es mi config de Fortnite 👇 Modo rendimiento, resolución 3D al 75 %, todo en bajo, sin VSync y con latencia baja. Mi última medición: 139 FPS de promedio. Cada PC da distinto. ¿Qué placa tenés vos? #fortnite #gtx1050ti #fps #pcgamer #configfortnite
+
+3_vie13_game_dvr.mp4  ->  viernes 13/11 20:00
+Windows tenía la grabación de partidas (Game DVR) activada y yo ni sabía 🎥 Si no guardás clips, apagalo: Configuración › Juegos › Capturas. ¿Vos guardás clips? 👇 #pcgamer #windows11 #fps #gaming #fortnite
+
+4_sab14_te_pueden_banear.mp4  ->  sábado 14/11 20:00
+¿Te pueden banear por optimizar Fortnite? La respuesta corta: no, si sabés qué toca el programa. FrameLab solo cambia el archivo de configuración oficial, el mismo que cambia el menú del juego. En Valorant y CS2 no toca nada: te da una guía. ¿Qué juego agrego después? 👇 #fortnite #pcgamer #ban #fps #roblox
+
+5_dom15_apps_de_windows.mp4  ->  domingo 15/11 20:00
+¿Alguna vez abriste estas apps? Vienen con Windows y casi nadie las usa. En mi PC saqué 9 con un toque, Copilot incluido, y cada una se puede reinstalar. ¿Cuál borrarías primero? 👇 #windows11 #pcgamer #copilot #gaming #optimizarpc
+
+Comentario fijado (todos): Gratis 👉 pompecca.github.io/FrameLab (también en mi perfil)
